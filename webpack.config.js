@@ -29,14 +29,14 @@ module.exports = {
         use: ["style-loader", "css-loader", "postcss-loader"],
       },
       {
-        test: /\.(png|svg|webp|jpeg|jpg)$/i,
+        test: /\.(png|webp|jpeg|jpg)$/i,
         type: "asset/resource",
       },
     ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "Webpack Tailwind Template",
+      title: "Todo Dump",
       filename: "index.html",
       template: "./src/template.html",
     }),

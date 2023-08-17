@@ -1,10 +1,16 @@
 module.exports = {
-  content: ['./dist/*.html'],
+  mode: "jit",
+  darkMode: "media",
+  content: ["./**/*.html", "./**/*.js"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Open Sans", "sans-serif"],
+      },
+    },
   },
   variants: {
     extend: {},
   },
-  plugins: [],
-}
+  plugins: [require("tailwindcss")],
+};
