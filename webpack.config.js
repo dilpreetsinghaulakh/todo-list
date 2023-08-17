@@ -42,7 +42,7 @@ module.exports = {
       template: "./src/template.html",
     }),
     new FaviconsWebpackPlugin({
-      logo: "./src/assets/favicon.png",
+      logo: "./src/assets/favicon.svg",
       mode: "webapp",
     }),
   ],
