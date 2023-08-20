@@ -11,5 +11,6 @@ export default function createTodo(
     description: description,
     dueDate: dueDate,
     priority: priority,
+    isDone: false,
   };
 }
