@@ -9,6 +9,6 @@ export default function renameProject(oldProjectName, newProjectName) {
     localStorage.setItem("todo", JSON.stringify(todoData));
   }
   else{
-    // Do something like a error prompt
+    // Do something like an error prompt
   }
 }
