@@ -1,3 +1,4 @@
+import uniqid from 'uniqid';
 import createProject from "./createProject";
 import createTodo from "./createTodo";
 
@@ -15,7 +16,7 @@ export default function addTodo(projectName) {
 
   projects[projectName].push(
     createTodo(
-      projects[projectName].length,
+      uniqid(),
       title.value,
       description.value,
       dueDate.value,

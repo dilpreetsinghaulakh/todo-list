@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "date-fns": "^2.30.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "uniqid": "^5.4.0"
   }
 }

@@ -1,12 +1,12 @@
 export default function createTodo(
-  previousId,
+  uniqueId,
   title,
   description,
   dueDate,
   priority
 ) {
   return {
-    id: previousId + 1,
+    id: uniqueId,
     title: title,
     description: description,
     dueDate: dueDate,
