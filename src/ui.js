@@ -283,7 +283,7 @@ export default class ui {
         const editBtn = document.createElement("div");
         editBtn.innerHTML += `<svg class="w-6 h-6" width="24" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="Edit / Edit_Pencil_02"><path id="Vector" d="M4 16.0001V20.0001L8 20.0001L18.8686 9.13146L18.8695 9.13061C19.265 8.73516 19.4628 8.53736 19.5369 8.3092C19.6021 8.10835 19.6022 7.89201 19.5369 7.69117C19.4627 7.46284 19.2646 7.26474 18.8686 6.86872L17.1288 5.12892C16.7345 4.7346 16.5369 4.53704 16.3091 4.46301C16.1082 4.39775 15.8919 4.39775 15.691 4.46301C15.463 4.53709 15.2652 4.73488 14.8704 5.12976L14.8686 5.13146L4 16.0001Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
         editBtn.className =
-          "absolute text-gray-500 w-0 pl-2 transition-all bg-gradient-to-r from-white/0 to-white to-20% overflow-hidden";
+          "absolute text-gray-500 w-0 transition-all bg-gradient-to-r from-white/0 to-white to-20% overflow-hidden";
         editBtn.addEventListener("click", () => {
           activateBackdrop();
         });
@@ -292,10 +292,12 @@ export default class ui {
           emoji.classList.add("shadow-lg");
           editBtn.classList.remove("w-0");
           editBtn.classList.add("w-8");
+          editBtn.classList.add("pl-2")
         });
         project.addEventListener("mouseout", () => {
           emoji.classList.remove("shadow-lg");
           editBtn.classList.remove("w-8");
+          editBtn.classList.remove("pl-2")
           editBtn.classList.add("w-0");
         });
 
@@ -309,7 +311,7 @@ export default class ui {
       const backdrop = document.createElement("div");
       backdrop.id = "backdrop";
       backdrop.className =
-        "h-screen w-screen absolute top-0 left-0 bg-white/25 hidden opacity-0 -z-10 backdrop-blur-none duration-500 transition-all";
+        "h-screen w-screen absolute top-0 left-0 bg-white/70 hidden opacity-0 -z-10 duration-500 transition-all";
       document.body.append(backdrop);
       backdrop.addEventListener("click", () => {
         deactivateBackdrop();
@@ -322,16 +324,14 @@ export default class ui {
       backdrop.classList.remove("-z-10");
       setTimeout(() => {
         backdrop.classList.add("opacity-100");
-        backdrop.classList.add("block");
-        backdrop.classList.add("backdrop-blur-lg");
+        backdrop.classList.add("backdrop-blur");
       }, 0);
     };
 
     const deactivateBackdrop = () => {
       const backdrop = document.getElementById("backdrop");
       backdrop.classList.remove("opacity-100");
-      backdrop.classList.remove("block");
-      backdrop.classList.remove("backdrop-blur-lg");
+      backdrop.classList.remove("backdrop-blur");
       setTimeout(() => {
         backdrop.classList.add("hidden");
         backdrop.classList.add("-z-10");
