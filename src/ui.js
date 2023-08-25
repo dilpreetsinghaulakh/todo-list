@@ -285,16 +285,7 @@ export default class ui {
         editBtn.className =
           "absolute text-gray-500 w-0 pl-2 transition-all bg-gradient-to-r from-white/0 to-white to-20% overflow-hidden";
         editBtn.addEventListener("click", () => {
-          // do something
-          const backdrop = document.getElementById("backdrop");
-          backdrop.classList.remove("hidden");
-          backdrop.classList.remove("-z-10");
-          backdrop.classList.remove("backdrop-blur-none");
-          setTimeout(() => {
-            backdrop.classList.add("opacity-100");
-            backdrop.classList.add("block");
-            backdrop.classList.add("backdrop-blur-lg");
-          }, 0);
+          activateBackdrop();
         });
 
         project.addEventListener("mouseover", () => {
@@ -314,17 +305,42 @@ export default class ui {
       return projects;
     };
 
-    const popUpTest = () => {
+    const addBackdrop = () => {
       const backdrop = document.createElement("div");
       backdrop.id = "backdrop";
       backdrop.className =
         "h-screen w-screen absolute top-0 left-0 bg-white/25 hidden opacity-0 -z-10 backdrop-blur-none duration-500 transition-all";
       document.body.append(backdrop);
+      backdrop.addEventListener("click", () => {
+        deactivateBackdrop();
+      });
+    };
+
+    const activateBackdrop = () => {
+      const backdrop = document.getElementById("backdrop");
+      backdrop.classList.remove("hidden");
+      backdrop.classList.remove("-z-10");
+      setTimeout(() => {
+        backdrop.classList.add("opacity-100");
+        backdrop.classList.add("block");
+        backdrop.classList.add("backdrop-blur-lg");
+      }, 0);
+    };
+
+    const deactivateBackdrop = () => {
+      const backdrop = document.getElementById("backdrop");
+      backdrop.classList.remove("opacity-100");
+      backdrop.classList.remove("block");
+      backdrop.classList.remove("backdrop-blur-lg");
+      setTimeout(() => {
+        backdrop.classList.add("hidden");
+        backdrop.classList.add("-z-10");
+      }, 300);
     };
 
     topBarUi();
     sideBar();
-    popUpTest();
+    addBackdrop();
   }
 
   static randomColorPastel = () => {
