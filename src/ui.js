@@ -406,39 +406,53 @@ export default class ui {
       newEmojiContainer.classList.add("cursor-pointer");
 
       const emojiSelectorContainer = document.createElement("div");
-      emojiSelectorContainer.className = "mx-auto";
+      emojiSelectorContainer.className = "mx-auto w-full transition-all";
 
       const newEmoji = document.createElement("p");
       newEmoji.textContent = oldEmoji;
-      newEmoji.className = "w-[1.3em] bg-transparent focus:outline-none";
 
       newEmojiContainer.appendChild(newEmoji);
       newEmojiContainer.addEventListener("click", () => {
         const changeEmoji = (emoji) => {
           newEmoji.textContent = emoji["native"];
-          emojiSelectorContainer.innerHTML = "";
+          //  = String.fromCodePoint("&#x" + emoji["unified"]);
+          // console.log(String.fromCodePoint("0x" + emoji["unified"]))
+          console.log(emoji["unified"].codePointAt(0).toString(16));
+          // console.log(`\u{${emoji["unified"]} }`)
+          removeEmojiPicker();
         };
         const pickerOptions = {
           onEmojiSelect: changeEmoji,
-          onClickOutside: (emojiSelectorContainer.innerHTML = ""),
           previewPosition: "none",
+          dynamicWidth: "true",
         };
         const picker = new Picker(pickerOptions);
         picker.id = "emojiSelector";
+        picker.className = "w-full transition-all opacity-100";
         emojiSelectorContainer.appendChild(picker);
 
         setTimeout(() => {
           window.addEventListener(
             "click",
             (e) => {
-              if (e.target.id !== "emojiSelector") {
-                emojiSelectorContainer.innerHTML = "";
-                // console.log("clicked");
-              }
+              if (
+                e.target.id !== "emojiSelector" &&
+                emojiSelectorContainer.innerHTML
+              )
+                removeEmojiPicker();
             },
             1
           );
         });
+
+        const removeEmojiPicker = () => {
+          picker.classList.remove("opacity-100");
+          picker.classList.add("opacity-0");
+          picker.classList.add("scale-y-0");
+          setTimeout(() => {
+            emojiSelectorContainer.innerHTML = "";
+          }, 150);
+        };
       });
 
       const newName = document.createElement("input");
