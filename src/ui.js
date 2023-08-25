@@ -1,5 +1,7 @@
 import renameProject from "./renameProject";
 import deleteProject from "./deleteProject";
+import data from "@emoji-mart/data";
+import { Picker } from "emoji-mart";
 
 // NOT PRODUCTION UI
 var _ = require("lodash");
@@ -358,7 +360,7 @@ export default class ui {
     const editProjectForm = (name) => {
       const form = document.createElement("div");
       form.className =
-        "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-8 flex flex-col";
+        "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-8 flex flex-col w-screen max-w-lg";
       form.id = "form";
 
       // const closeBtn = document.createElement("button")
@@ -401,14 +403,43 @@ export default class ui {
       newEmojiContainer.className = circleBgIconStyleClasses;
       newEmojiContainer.classList.add("w-10");
       newEmojiContainer.classList.add("pastel-rainbow-bg");
+      newEmojiContainer.classList.add("cursor-pointer");
 
-      const newEmoji = document.createElement("input");
-      newEmoji.type = "text";
-      newEmoji.maxLength = 1;
-      newEmoji.placeholder = oldEmoji;
+      const emojiSelectorContainer = document.createElement("div");
+      emojiSelectorContainer.className = "mx-auto";
+
+      const newEmoji = document.createElement("p");
+      newEmoji.textContent = oldEmoji;
       newEmoji.className = "w-[1.3em] bg-transparent focus:outline-none";
 
       newEmojiContainer.appendChild(newEmoji);
+      newEmojiContainer.addEventListener("click", () => {
+        const changeEmoji = (emoji) => {
+          newEmoji.textContent = emoji["native"];
+          emojiSelectorContainer.innerHTML = "";
+        };
+        const pickerOptions = {
+          onEmojiSelect: changeEmoji,
+          onClickOutside: (emojiSelectorContainer.innerHTML = ""),
+          previewPosition: "none",
+        };
+        const picker = new Picker(pickerOptions);
+        picker.id = "emojiSelector";
+        emojiSelectorContainer.appendChild(picker);
+
+        setTimeout(() => {
+          window.addEventListener(
+            "click",
+            (e) => {
+              if (e.target.id !== "emojiSelector") {
+                emojiSelectorContainer.innerHTML = "";
+                // console.log("clicked");
+              }
+            },
+            1
+          );
+        });
+      });
 
       const newName = document.createElement("input");
       newName.type = "text";
@@ -423,9 +454,9 @@ export default class ui {
         "bg-[#0057FF] text-white font-bold w-fit mx-auto px-8 py-2 rounded-lg hover:shadow-lg hover:shadow-[#0057FF30] transition";
       renameBtn.addEventListener("click", () => {
         var newEmojiValue = "";
-        if (!newEmoji.value) {
+        if (!newEmoji.textContent) {
           newEmojiValue = oldEmoji;
-        } else newEmojiValue = newEmoji.value;
+        } else newEmojiValue = newEmoji.textContent;
 
         var newNameValue = "";
         if (!newName.value) {
@@ -437,7 +468,14 @@ export default class ui {
         deactivateBackdrop();
       });
 
-      rename.append(renameP, nameContainer, to, renameInputs, renameBtn);
+      rename.append(
+        renameP,
+        nameContainer,
+        to,
+        renameInputs,
+        emojiSelectorContainer,
+        renameBtn
+      );
 
       const or = document.createElement("h1");
       or.textContent = "Or";

@@ -25,7 +25,9 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "@emoji-mart/data": "^1.1.2",
     "date-fns": "^2.30.0",
+    "emoji-mart": "^5.5.2",
     "lodash": "^4.17.21",
     "uniqid": "^5.4.0"
   }
