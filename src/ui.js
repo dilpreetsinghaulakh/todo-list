@@ -7,10 +7,6 @@ const todoData = JSON.parse(localStorage.getItem("todo"));
 export default class ui {
   static printTodo() {
     const content = document.getElementById("content");
-    // content.className = "h-screen";
-
-    // this.navbar(Object.keys(todoData)[0]);
-
     content.innerHTML = "";
     Object.keys(todoData).forEach((element) => {
       const projectNameP = document.createElement("p");
@@ -290,6 +286,15 @@ export default class ui {
           "absolute text-gray-500 w-0 pl-2 transition-all bg-gradient-to-r from-white/0 to-white to-20% overflow-hidden";
         editBtn.addEventListener("click", () => {
           // do something
+          const backdrop = document.getElementById("backdrop");
+          backdrop.classList.remove("hidden");
+          backdrop.classList.remove("-z-10");
+          backdrop.classList.remove("backdrop-blur-none");
+          setTimeout(() => {
+            backdrop.classList.add("opacity-100");
+            backdrop.classList.add("block");
+            backdrop.classList.add("backdrop-blur-lg");
+          }, 0);
         });
 
         project.addEventListener("mouseover", () => {
@@ -309,10 +314,19 @@ export default class ui {
       return projects;
     };
 
+    const popUpTest = () => {
+      const backdrop = document.createElement("div");
+      backdrop.id = "backdrop";
+      backdrop.className =
+        "h-screen w-screen absolute top-0 left-0 bg-white/25 hidden opacity-0 -z-10 backdrop-blur-none duration-500 transition-all";
+      document.body.append(backdrop);
+    };
+
     topBarUi();
     sideBar();
+    popUpTest();
   }
-  
+
   static randomColorPastel = () => {
     function hslToHex(h, s, l) {
       l /= 100;
