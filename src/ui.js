@@ -193,11 +193,6 @@ export default class ui {
       const today = new Date();
       const day = today.getDate();
 
-      // const openIcon = document.createElement("div");
-      // openIcon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="System / Bar_Left"><path id="Vector" d="M9 20V4M9 20H16.8031C17.921 20 18.48 20 18.9074 19.7822C19.2837 19.5905 19.5905 19.2837 19.7822 18.9074C20 18.48 20 17.921 20 16.8031V7.19691C20 6.07899 20 5.5192 19.7822 5.0918C19.5905 4.71547 19.2837 4.40973 18.9074 4.21799C18.4796 4 17.9203 4 16.8002 4H9M9 20H7.19692C6.07901 20 5.5192 20 5.0918 19.7822C4.71547 19.5905 4.40973 19.2837 4.21799 18.9074C4 18.4796 4 17.9203 4 16.8002V7.2002C4 6.08009 4 5.51962 4.21799 5.0918C4.40973 4.71547 4.71547 4.40973 5.0918 4.21799C5.51962 4 6.08009 4 7.2002 4H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
-      // openIcon.className =
-      //   "cursor-pointer ml-auto p-2 bg-gray-200 w-fit rounded-full rotate-0";
-
       const homeAndDayArray = [
         {
           name: "Home",
@@ -227,7 +222,7 @@ export default class ui {
       for (let i = 0; i < homeAndDayArray.length; i++) {
         const span = document.createElement("span");
         span.className =
-          "flex items-center cursor-pointer gap-2 transition duration-200 hover:text-[#0057FF]";
+          "flex items-center cursor-pointer gap-2 transition hover:text-[#0057FF]";
 
         const icon = document.createElement("div");
         icon.innerHTML += homeAndDayArray[i].svg;
@@ -250,7 +245,8 @@ export default class ui {
     };
 
     const createNewProjectBtn = document.createElement("span");
-    createNewProjectBtn.className = "flex items-center gap-2 cursor-pointer mt-4";
+    createNewProjectBtn.className =
+      "flex items-center gap-2 cursor-pointer mt-4";
 
     const addIcon = document.createElement("div");
     addIcon.innerHTML += `<svg class="w-6 h-6" width="24" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="File / Folder_Add"><path id="Vector" d="M12 16V13M12 13V10M12 13H9M12 13H15M3 6V16.8C3 17.9201 3 18.4798 3.21799 18.9076C3.40973 19.2839 3.71547 19.5905 4.0918 19.7822C4.5192 20 5.07899 20 6.19691 20H17.8031C18.921 20 19.48 20 19.9074 19.7822C20.2837 19.5905 20.5905 19.2841 20.7822 18.9078C21.0002 18.48 21.0002 17.9199 21.0002 16.7998L21.0002 9.19978C21.0002 8.07967 21.0002 7.51962 20.7822 7.0918C20.5905 6.71547 20.2839 6.40973 19.9076 6.21799C19.4798 6 18.9201 6 17.8 6H12M3 6H12M3 6C3 4.89543 3.89543 4 5 4H8.67452C9.1637 4 9.40886 4 9.63904 4.05526C9.84311 4.10425 10.0379 4.18526 10.2168 4.29492C10.4186 4.41857 10.5918 4.59182 10.9375 4.9375L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
@@ -282,7 +278,7 @@ export default class ui {
         const emoji = document.createElement("p");
         emoji.textContent = [...key][0];
         emoji.className = circleBgIconStyleClasses;
-        emoji.style.backgroundColor = randomColorPastel();
+        emoji.style.backgroundColor = this.randomColorPastel();
 
         const projectName = document.createElement("p");
         projectName.textContent = [...key].slice(1).join("");
@@ -297,12 +293,12 @@ export default class ui {
         });
 
         project.addEventListener("mouseover", () => {
-          emoji.classList.add("shadow-lg")
+          emoji.classList.add("shadow-lg");
           editBtn.classList.remove("w-0");
           editBtn.classList.add("w-8");
         });
         project.addEventListener("mouseout", () => {
-          emoji.classList.remove("shadow-lg")
+          emoji.classList.remove("shadow-lg");
           editBtn.classList.remove("w-8");
           editBtn.classList.add("w-0");
         });
@@ -313,25 +309,25 @@ export default class ui {
       return projects;
     };
 
-    const randomColorPastel = () => {
-      function hslToHex(h, s, l) {
-        l /= 100;
-        const a = (s * Math.min(l, 1 - l)) / 100;
-        const f = (n) => {
-          const k = (n + h / 30) % 12;
-          const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-          return Math.round(255 * color)
-            .toString(16)
-            .padStart(2, "0"); // convert to Hex and prefix "0" if needed
-        };
-        return `#${f(0)}${f(8)}${f(4)}`;
-      }
-      return hslToHex(Math.floor(Math.random() * 256), 75, 90);
-    };
-
     topBarUi();
     sideBar();
   }
+  
+  static randomColorPastel = () => {
+    function hslToHex(h, s, l) {
+      l /= 100;
+      const a = (s * Math.min(l, 1 - l)) / 100;
+      const f = (n) => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color)
+          .toString(16)
+          .padStart(2, "0");
+      };
+      return `#${f(0)}${f(8)}${f(4)}`;
+    }
+    return hslToHex(Math.floor(Math.random() * 360), 75, 90);
+  };
 
   static initialInsertions() {
     this.desktopUi();
