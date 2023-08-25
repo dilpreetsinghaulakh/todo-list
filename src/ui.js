@@ -1,11 +1,18 @@
+import renameProject from "./renameProject";
+import deleteProject from "./deleteProject";
+
 // NOT PRODUCTION UI
 var _ = require("lodash");
 import { da } from "date-fns/locale";
 import deleteTodo from "./deleteTodo";
-const todoData = JSON.parse(localStorage.getItem("todo"));
+
+const getTodoData = () => {
+  return JSON.parse(localStorage.getItem("todo"));
+};
 // WILL BE CHANGED
 export default class ui {
   static printTodo() {
+    const todoData = getTodoData();
     const content = document.getElementById("content");
     content.innerHTML = "";
     Object.keys(todoData).forEach((element) => {
@@ -234,10 +241,8 @@ export default class ui {
 
       homeAndDay.className = "flex flex-col gap 2";
 
-      const project = projects();
-
       sidebar.className = "w-[256px] px-4 flex flex-col gap-2";
-      sidebar.append(homeAndDay, createNewProjectBtn, project);
+      sidebar.append(homeAndDay, createNewProjectBtn, projects());
     };
 
     const createNewProjectBtn = document.createElement("span");
@@ -263,7 +268,9 @@ export default class ui {
     });
 
     const projects = () => {
+      const todoData = getTodoData();
       const projects = document.createElement("div");
+      projects.id = "sidebarProjects";
       projects.className = "flex flex-col gap-2";
 
       Object.keys(todoData).forEach((key) => {
@@ -286,18 +293,19 @@ export default class ui {
           "absolute text-gray-500 w-0 transition-all bg-gradient-to-r from-white/0 to-white to-20% overflow-hidden";
         editBtn.addEventListener("click", () => {
           activateBackdrop();
+          editProjectForm(key);
         });
 
         project.addEventListener("mouseover", () => {
           emoji.classList.add("shadow-lg");
           editBtn.classList.remove("w-0");
           editBtn.classList.add("w-8");
-          editBtn.classList.add("pl-2")
+          editBtn.classList.add("pl-2");
         });
         project.addEventListener("mouseout", () => {
           emoji.classList.remove("shadow-lg");
           editBtn.classList.remove("w-8");
-          editBtn.classList.remove("pl-2")
+          editBtn.classList.remove("pl-2");
           editBtn.classList.add("w-0");
         });
 
@@ -307,14 +315,21 @@ export default class ui {
       return projects;
     };
 
+    const updateSidebarProjects = () => {
+      const newProjects = projects();
+      document.getElementById("sidebarProjects").replaceWith(newProjects);
+    };
+
     const addBackdrop = () => {
       const backdrop = document.createElement("div");
       backdrop.id = "backdrop";
       backdrop.className =
         "h-screen w-screen absolute top-0 left-0 bg-white/70 hidden opacity-0 -z-10 duration-500 transition-all";
       document.body.append(backdrop);
-      backdrop.addEventListener("click", () => {
-        deactivateBackdrop();
+      backdrop.addEventListener("click", (e) => {
+        if (e.target.id === "backdrop") {
+          deactivateBackdrop();
+        }
       });
     };
 
@@ -335,7 +350,113 @@ export default class ui {
       setTimeout(() => {
         backdrop.classList.add("hidden");
         backdrop.classList.add("-z-10");
+
+        backdrop.innerHTML = "";
       }, 300);
+    };
+
+    const editProjectForm = (name) => {
+      const form = document.createElement("div");
+      form.className =
+        "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-8 flex flex-col";
+      form.id = "form";
+
+      // const closeBtn = document.createElement("button")
+      // closeBtn.innerHTML += ``
+
+      const bigTextStyleClasses = "text-3xl font-bold";
+
+      const oldEmoji = [...name][0];
+      const oldName = [...name].slice(1).join("");
+
+      const rename = document.createElement("div");
+      rename.className = "flex flex-col gap-4";
+      const renameP = document.createElement("h1");
+      renameP.textContent = "Rename";
+      renameP.className = bigTextStyleClasses;
+
+      const nameContainer = document.createElement("div");
+      nameContainer.className = "flex gap-2 items-center";
+
+      const emojiP = document.createElement("p");
+      emojiP.textContent = oldEmoji;
+      emojiP.className = circleBgIconStyleClasses;
+      emojiP.classList.add("w-10");
+      emojiP.classList.add("pastel-rainbow-bg");
+
+      const nameP = document.createElement("p");
+      nameP.textContent = oldName;
+      nameP.className = "text-xl";
+
+      nameContainer.append(emojiP, nameP);
+
+      const to = document.createElement("h1");
+      to.textContent = "to";
+      to.className = bigTextStyleClasses;
+
+      const renameInputs = document.createElement("div");
+      renameInputs.className = "flex gap-2";
+
+      const newEmojiContainer = document.createElement("div");
+      newEmojiContainer.className = circleBgIconStyleClasses;
+      newEmojiContainer.classList.add("w-10");
+      newEmojiContainer.classList.add("pastel-rainbow-bg");
+
+      const newEmoji = document.createElement("input");
+      newEmoji.type = "text";
+      newEmoji.maxLength = 1;
+      newEmoji.placeholder = oldEmoji;
+      newEmoji.className = "w-[1.3em] bg-transparent focus:outline-none";
+
+      newEmojiContainer.appendChild(newEmoji);
+
+      const newName = document.createElement("input");
+      newName.type = "text";
+      newName.placeholder = oldName;
+      newName.className = "w-full bg-transparent focus:outline-none border-b";
+
+      renameInputs.append(newEmojiContainer, newName);
+
+      const renameBtn = document.createElement("button");
+      renameBtn.textContent = "Rename it";
+      renameBtn.className =
+        "bg-[#0057FF] text-white font-bold w-fit mx-auto px-8 py-2 rounded-lg hover:shadow-lg hover:shadow-[#0057FF30] transition";
+      renameBtn.addEventListener("click", () => {
+        var newEmojiValue = "";
+        if (!newEmoji.value) {
+          newEmojiValue = oldEmoji;
+        } else newEmojiValue = newEmoji.value;
+
+        var newNameValue = "";
+        if (!newName.value) {
+          newNameValue = oldName;
+        } else newNameValue = newName.value;
+
+        renameProject(name, newEmojiValue + newNameValue);
+        updateSidebarProjects();
+        deactivateBackdrop();
+      });
+
+      rename.append(renameP, nameContainer, to, renameInputs, renameBtn);
+
+      const or = document.createElement("h1");
+      or.textContent = "Or";
+      or.className = bigTextStyleClasses;
+      or.classList.add("my-4");
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className =
+        "bg-red-500 text-white font-bold w-fit mx-auto px-8 py-2 rounded-lg hover:shadow-lg hover:shadow-red-500/30 transition";
+      deleteBtn.textContent = "Delete it";
+      deleteBtn.addEventListener("click", () => {
+        deleteProject(name);
+        updateSidebarProjects();
+        deactivateBackdrop();
+      });
+
+      form.append(rename, or, deleteBtn);
+
+      document.getElementById("backdrop").append(form);
     };
 
     topBarUi();

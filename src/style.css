@@ -1,4 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .pastel-rainbow-bg {
+    background: linear-gradient(
+      45deg,
+      hsl(0, 75%, 90%) 0%,
+      hsl(36, 75%, 90%) 10%,
+      hsl(64, 75%, 90%) 20%,
+      hsl(118, 75%, 90%) 30%,
+      hsl(179, 75%, 90%) 40%,
+      hsl(188, 75%, 90%) 50%,
+      hsl(212, 75%, 90%) 60%,
+      hsl(260, 75%, 90%) 70%,
+      hsl(284, 75%, 90%) 80%,
+      hsl(308, 75%, 90%) 90%,
+      hsl(360, 75%, 90%) 100%
+    );
+  }
+}
