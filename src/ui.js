@@ -185,7 +185,7 @@ export default class ui {
       });
 
       topbar.append(appIcon, settingsIcon);
-      topbar.className = "flex px-8 py-6 justify-between items-center";
+      topbar.className = "flex px-8 py-6 justify-between items-center select-none";
     };
 
     const circleBgIconStyleClasses =
@@ -244,7 +244,7 @@ export default class ui {
 
       homeAndDay.className = "flex flex-col gap 2";
 
-      sidebar.className = "w-[256px] px-4 flex flex-col gap-2";
+      sidebar.className = "w-[256px] px-4 flex flex-col gap-2 select-none";
       sidebar.append(homeAndDay, createNewProjectBtn, projects());
     };
 
@@ -331,7 +331,7 @@ export default class ui {
       const backdrop = document.createElement("div");
       backdrop.id = "backdrop";
       backdrop.className =
-        "h-screen w-screen absolute top-0 left-0 bg-white/70 hidden opacity-0 -z-10 duration-500 transition-all";
+        "h-screen w-screen absolute top-0 left-0 bg-white/70 hidden opacity-0 -z-10 duration-500 transition-all select-none";
       document.body.append(backdrop);
       backdrop.addEventListener("click", (e) => {
         if (e.target.id === "backdrop") {
