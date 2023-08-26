@@ -1,5 +1,6 @@
 import renameProject from "./renameProject";
 import deleteProject from "./deleteProject";
+import createProject from "./createProject";
 import data from "@emoji-mart/data";
 import { Picker } from "emoji-mart";
 
@@ -269,11 +270,16 @@ export default class ui {
       addIcon.classList.remove("shadow-lg");
     });
 
+    createNewProjectBtn.addEventListener("click", () => {
+      addProjectForm();
+    });
+    // var splitter = new GraphemeSplitter();
     const projects = () => {
       const todoData = getTodoData();
       const projects = document.createElement("div");
       projects.id = "sidebarProjects";
       projects.className = "flex flex-col gap-2";
+      console.log(todoData);
 
       Object.keys(todoData).forEach((key) => {
         const project = document.createElement("span");
@@ -294,7 +300,6 @@ export default class ui {
         editBtn.className =
           "absolute text-gray-500 w-0 transition-all bg-gradient-to-r from-white/0 to-white to-20% overflow-hidden";
         editBtn.addEventListener("click", () => {
-          activateBackdrop();
           editProjectForm(key);
         });
 
@@ -357,7 +362,10 @@ export default class ui {
       }, 300);
     };
 
+    const bigTextStyleClasses = "text-3xl font-bold";
+
     const editProjectForm = (name) => {
+      activateBackdrop();
       const form = document.createElement("div");
       form.className =
         "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-8 flex flex-col w-screen max-w-lg";
@@ -365,8 +373,6 @@ export default class ui {
 
       // const closeBtn = document.createElement("button")
       // closeBtn.innerHTML += ``
-
-      const bigTextStyleClasses = "text-3xl font-bold";
 
       const oldEmoji = [...name][0];
       const oldName = [...name].slice(1).join("");
@@ -412,47 +418,9 @@ export default class ui {
       newEmoji.textContent = oldEmoji;
 
       newEmojiContainer.appendChild(newEmoji);
+
       newEmojiContainer.addEventListener("click", () => {
-        const changeEmoji = (emoji) => {
-          newEmoji.textContent = emoji["native"];
-          //  = String.fromCodePoint("&#x" + emoji["unified"]);
-          // console.log(String.fromCodePoint("0x" + emoji["unified"]))
-          console.log(emoji["unified"].codePointAt(0).toString(16));
-          // console.log(`\u{${emoji["unified"]} }`)
-          removeEmojiPicker();
-        };
-        const pickerOptions = {
-          onEmojiSelect: changeEmoji,
-          previewPosition: "none",
-          dynamicWidth: "true",
-        };
-        const picker = new Picker(pickerOptions);
-        picker.id = "emojiSelector";
-        picker.className = "w-full transition-all opacity-100";
-        emojiSelectorContainer.appendChild(picker);
-
-        setTimeout(() => {
-          window.addEventListener(
-            "click",
-            (e) => {
-              if (
-                e.target.id !== "emojiSelector" &&
-                emojiSelectorContainer.innerHTML
-              )
-                removeEmojiPicker();
-            },
-            1
-          );
-        });
-
-        const removeEmojiPicker = () => {
-          picker.classList.remove("opacity-100");
-          picker.classList.add("opacity-0");
-          picker.classList.add("scale-y-0");
-          setTimeout(() => {
-            emojiSelectorContainer.innerHTML = "";
-          }, 150);
-        };
+        this.newEmojiSelector(emojiSelectorContainer, newEmoji);
       });
 
       const newName = document.createElement("input");
@@ -511,9 +479,142 @@ export default class ui {
       document.getElementById("backdrop").append(form);
     };
 
+    const addProjectForm = () => {
+      activateBackdrop();
+      const form = document.createElement("div");
+      form.className =
+        "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-8 flex flex-col gap-4 w-screen max-w-lg";
+      form.id = "form";
+
+      const addTitle = document.createElement("h1");
+      addTitle.textContent = "Add a new Project";
+      addTitle.className = bigTextStyleClasses;
+
+      const emojiSelectionDiv = document.createElement("div");
+      emojiSelectionDiv.className = "flex gap-2 items-center text-lg";
+
+      const preEmojiText = document.createElement("p");
+      preEmojiText.textContent = "with this";
+
+      const emojiContainer = document.createElement("div");
+      emojiContainer.className = circleBgIconStyleClasses;
+      emojiContainer.classList.add("w-10");
+      emojiContainer.classList.add("pastel-rainbow-bg");
+      emojiContainer.classList.add("cursor-pointer");
+
+      const emojiP = document.createElement("p");
+      emojiP.textContent = "☺︎";
+      emojiP.className = "text-black/50 text-base";
+
+      emojiContainer.appendChild(emojiP);
+
+      const emojiSelectorContainer = document.createElement("div");
+      emojiSelectorContainer.className = "mx-auto w-full transition-all";
+
+      emojiContainer.addEventListener("click", () => {
+        this.newEmojiSelector(emojiSelectorContainer, emojiP);
+        emojiContainer.classList.remove("outline");
+      });
+
+      const afterEmojiText = document.createElement("p");
+      afterEmojiText.textContent = "emoji and";
+
+      emojiSelectionDiv.append(preEmojiText, emojiContainer, afterEmojiText);
+
+      const nameInputDiv = document.createElement("div");
+      nameInputDiv.className = "flex gap-4 text-lg";
+
+      const preNameText = document.createElement("p");
+      preNameText.textContent = "named";
+
+      const nameInput = document.createElement("input");
+      nameInput.type = "text";
+      nameInput.placeholder = "something";
+      nameInput.className =
+        "w-full bg-transparent focus:outline-none border-b rounded-none";
+      nameInput.addEventListener("keypress", () => {
+        nameInput.classList.remove("border-red-500");
+      });
+
+      const fullStop = document.createElement("p");
+      fullStop.textContent = ".";
+
+      nameInputDiv.append(preNameText, nameInput, fullStop);
+
+      const addBtn = document.createElement("button");
+      addBtn.textContent = "Add it";
+      addBtn.className =
+        "bg-[#0057FF] text-white font-bold w-fit mx-auto px-8 py-2 rounded-lg hover:shadow-lg hover:shadow-[#0057FF]s/30 transition";
+
+      addBtn.addEventListener("click", () => {
+        if (emojiP.textContent === "☺︎") {
+          emojiContainer.classList.add("outline-red-500");
+          emojiContainer.classList.add("outline");
+          emojiContainer.classList.add("outline-1");
+        }
+        if (!nameInput.value) {
+          nameInput.classList.add("border-red-500");
+        }
+        if (emojiP.textContent !== "☺︎" && nameInput.value) {
+          createProject(emojiP.textContent + nameInput.value);
+          updateSidebarProjects();
+          deactivateBackdrop();
+        }
+      });
+
+      form.append(
+        addTitle,
+        emojiSelectionDiv,
+        emojiSelectorContainer,
+        nameInputDiv,
+        addBtn
+      );
+      document.getElementById("backdrop").append(form);
+    };
+
     topBarUi();
     sideBar();
     addBackdrop();
+  }
+
+  static newEmojiSelector(emojiSelectorContainer, emojiP) {
+    const changeEmoji = (emoji) => {
+      emojiP.textContent = emoji["native"];
+      removeEmojiPicker();
+    };
+    const pickerOptions = {
+      onEmojiSelect: changeEmoji,
+      previewPosition: "none",
+      dynamicWidth: "true",
+    };
+
+    const picker = new Picker(pickerOptions);
+    picker.id = "emojiSelector";
+    picker.className = "w-full transition-all opacity-100";
+    emojiSelectorContainer.appendChild(picker);
+
+    setTimeout(() => {
+      window.addEventListener(
+        "click",
+        (e) => {
+          if (
+            e.target.id !== "emojiSelector" &&
+            emojiSelectorContainer.innerHTML
+          )
+            removeEmojiPicker();
+        },
+        1
+      );
+    });
+
+    const removeEmojiPicker = () => {
+      picker.classList.remove("opacity-100");
+      picker.classList.add("opacity-0");
+      picker.classList.add("scale-y-0");
+      setTimeout(() => {
+        emojiSelectorContainer.innerHTML = "";
+      }, 150);
+    };
   }
 
   static randomColorPastel = () => {
