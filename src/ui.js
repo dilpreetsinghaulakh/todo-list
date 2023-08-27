@@ -1,13 +1,12 @@
 import renameProject from "./renameProject";
 import deleteProject from "./deleteProject";
 import createProject from "./createProject";
-import data from "@emoji-mart/data";
 import { Picker } from "emoji-mart";
-
-// NOT PRODUCTION UI
 var _ = require("lodash");
-import { da } from "date-fns/locale";
 import deleteTodo from "./deleteTodo";
+
+const projectNameRegex = /[^A-Z a-z0-9_.-]/g;
+const emojiRegex = /[\w()_.-]/g;
 
 const getTodoData = () => {
   return JSON.parse(localStorage.getItem("todo"));
@@ -185,7 +184,8 @@ export default class ui {
       });
 
       topbar.append(appIcon, settingsIcon);
-      topbar.className = "flex px-8 py-6 justify-between items-center select-none";
+      topbar.className =
+        "flex px-8 py-6 justify-between items-center select-none";
     };
 
     const circleBgIconStyleClasses =
@@ -273,7 +273,7 @@ export default class ui {
     createNewProjectBtn.addEventListener("click", () => {
       addProjectForm();
     });
-    // var splitter = new GraphemeSplitter();
+
     const projects = () => {
       const todoData = getTodoData();
       const projects = document.createElement("div");
@@ -287,12 +287,12 @@ export default class ui {
           "flex justify-end gap-2 items-center cursor-pointer";
 
         const emoji = document.createElement("p");
-        emoji.textContent = [...key][0];
+        emoji.textContent = this.getProjectNameEmoji(key);
         emoji.className = circleBgIconStyleClasses;
         emoji.style.backgroundColor = this.randomColorPastel();
 
         const projectName = document.createElement("p");
-        projectName.textContent = [...key].slice(1).join("");
+        projectName.textContent = this.getProjectNameOnly(key);
         projectName.className = textStyleClasses;
 
         const editBtn = document.createElement("div");
@@ -374,8 +374,8 @@ export default class ui {
       // const closeBtn = document.createElement("button")
       // closeBtn.innerHTML += ``
 
-      const oldEmoji = [...name][0];
-      const oldName = [...name].slice(1).join("");
+      const oldEmoji = this.getProjectNameEmoji(name);
+      const oldName = this.getProjectNameOnly(name);
 
       const rename = document.createElement("div");
       rename.className = "flex flex-col gap-4";
@@ -428,7 +428,22 @@ export default class ui {
       newName.placeholder = oldName;
       newName.className = "w-full bg-transparent focus:outline-none border-b";
 
+      newName.addEventListener("keypress", (event) => {
+        const regex = /[a-zA-Z0-9 _\-\.]/;
+        const value = event.key;
+        inputError.classList.add("h-0");
+        if (!regex.test(value)) {
+          event.preventDefault();
+          inputError.classList.remove("h-0");
+        }
+      });
+
       renameInputs.append(newEmojiContainer, newName);
+
+      const inputError = document.createElement("p");
+      inputError.textContent =
+        "Only alphanumeric characters, hyphen, dot, and underscore are allowed.";
+      inputError.className = "text-red-500 text-xs h-0 overflow-hidden mx-auto";
 
       const renameBtn = document.createElement("button");
       renameBtn.textContent = "Rename it";
@@ -445,9 +460,17 @@ export default class ui {
           newNameValue = oldName;
         } else newNameValue = newName.value;
 
-        renameProject(name, newEmojiValue + newNameValue);
-        updateSidebarProjects();
-        deactivateBackdrop();
+        for (let i = 0; i < [...newName.value].length; i++) {
+          if (!/[a-zA-Z0-9 _.-]/.test([...newName.value][i])) {
+            inputError.classList.remove("h-0");
+          }
+        }
+
+        if (inputError.classList.contains("h-0")) {
+          renameProject(name, newEmojiValue + newNameValue);
+          updateSidebarProjects();
+          deactivateBackdrop();
+        }
       });
 
       rename.append(
@@ -455,6 +478,7 @@ export default class ui {
         nameContainer,
         to,
         renameInputs,
+        inputError,
         emojiSelectorContainer,
         renameBtn
       );
@@ -532,14 +556,26 @@ export default class ui {
       nameInput.placeholder = "something";
       nameInput.className =
         "w-full bg-transparent focus:outline-none border-b rounded-none";
-      nameInput.addEventListener("keypress", () => {
-        nameInput.classList.remove("border-red-500");
+
+      nameInput.addEventListener("keypress", (event) => {
+        const regex = /[a-zA-Z0-9 _\-\.]/;
+        const value = event.key;
+        inputError.classList.add("h-0");
+        if (!regex.test(value)) {
+          event.preventDefault();
+          inputError.classList.remove("h-0");
+        }
       });
 
       const fullStop = document.createElement("p");
       fullStop.textContent = ".";
 
       nameInputDiv.append(preNameText, nameInput, fullStop);
+
+      const inputError = document.createElement("p");
+      inputError.textContent =
+        "Only alphanumeric characters, hyphen, dot, and underscore are allowed.";
+      inputError.className = "text-red-500 text-xs h-0 overflow-hidden mx-auto";
 
       const addBtn = document.createElement("button");
       addBtn.textContent = "Add it";
@@ -555,7 +591,19 @@ export default class ui {
         if (!nameInput.value) {
           nameInput.classList.add("border-red-500");
         }
-        if (emojiP.textContent !== "☺︎" && nameInput.value) {
+
+        [...nameInput.value].forEach;
+        for (let i = 0; i < [...nameInput.value].length; i++) {
+          if (!/[a-zA-Z0-9 _.-]/.test([...nameInput.value][i])) {
+            inputError.classList.remove("h-0");
+          }
+        }
+
+        if (
+          emojiP.textContent !== "☺︎" &&
+          nameInput.value &&
+          inputError.classList.contains("h-0")
+        ) {
           createProject(emojiP.textContent + nameInput.value);
           updateSidebarProjects();
           deactivateBackdrop();
@@ -567,6 +615,7 @@ export default class ui {
         emojiSelectionDiv,
         emojiSelectorContainer,
         nameInputDiv,
+        inputError,
         addBtn
       );
       document.getElementById("backdrop").append(form);
@@ -632,6 +681,14 @@ export default class ui {
     }
     return hslToHex(Math.floor(Math.random() * 360), 75, 90);
   };
+
+  static getProjectNameEmoji(name) {
+    return name.replace(emojiRegex, "");
+  }
+
+  static getProjectNameOnly(name) {
+    return name.replace(projectNameRegex, "");
+  }
 
   static initialInsertions() {
     this.desktopUi();
