@@ -279,9 +279,23 @@ export default class ui {
       const projects = document.createElement("div");
       projects.id = "sidebarProjects";
       projects.className = "flex flex-col gap-2";
-      console.log(todoData);
 
+      const onlyNameArray = [];
       Object.keys(todoData).forEach((key) => {
+        onlyNameArray.push(key);
+      });
+      const sortedKeyArray = onlyNameArray.sort((a, b) =>
+        this.getProjectNameOnly(a)
+          .trim()
+          .toLowerCase()
+          .localeCompare(
+            this.getProjectNameOnly(b).trim().toLowerCase(),
+            undefined,
+            { sensitivity: "base" }
+          )
+      );
+
+      sortedKeyArray.forEach((key) => {
         const project = document.createElement("span");
         project.className =
           "flex justify-end gap-2 items-center cursor-pointer";
