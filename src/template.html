@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
-  <body>
+  <body class="h-screen flex flex-col">
     <div id="topbar"></div>
-    <div class="flex">
+    <div class="flex h-full mb-4">
       <div id="sidebar"></div>
-      <div class="flex-grow border border-slate-500 min-h-screen p-8 rounded-xl" id="content"></div>
+      <div class="flex-grow border border-slate-500 h-full p-8 mr-4 overflow-y-scroll rounded-xl" id="content"></div>
     </div>
 
 

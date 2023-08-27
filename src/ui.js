@@ -185,7 +185,7 @@ export default class ui {
 
       topbar.append(appIcon, settingsIcon);
       topbar.className =
-        "flex px-8 py-6 justify-between items-center select-none";
+        "flex px-4 py-6 justify-between items-center select-none";
     };
 
     const circleBgIconStyleClasses =
@@ -244,7 +244,7 @@ export default class ui {
 
       homeAndDay.className = "flex flex-col gap 2";
 
-      sidebar.className = "w-[256px] px-4 flex flex-col gap-2 select-none";
+      sidebar.className = "w-[256px] px-4 flex flex-col gap-2 select-none overflow-y-scroll";
       sidebar.append(homeAndDay, createNewProjectBtn, projects());
     };
 
