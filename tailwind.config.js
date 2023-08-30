@@ -7,6 +7,9 @@ module.exports = {
       fontFamily: {
         sans: ["Open Sans", "sans-serif"],
       },
+      colors: {
+        "spl-blue": "#186AFD",
+      },
     },
   },
   variants: {
