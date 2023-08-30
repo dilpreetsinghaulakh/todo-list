@@ -11,7 +11,12 @@ const emojiRegex = /[\w()_.-]/g;
 const getTodoData = () => {
   return JSON.parse(localStorage.getItem("todo"));
 };
-// WILL BE CHANGED
+
+const circleBgIconStyleClasses =
+  "aspect-square flex shrink-0 items-center basis-10 justify-center p-2 rounded-full transition";
+const textStyleClasses =
+  "flex-grow overflow-hidden whitespace-nowrap text-ellipsis";
+
 export default class ui {
   // static printTodo() {
   //   const todoData = getTodoData();
@@ -186,11 +191,6 @@ export default class ui {
         "flex px-4 py-6 justify-between items-center select-none";
     };
 
-    const circleBgIconStyleClasses =
-      "aspect-square flex shrink-0 items-center basis-10 justify-center p-2 rounded-full transition";
-    const textStyleClasses =
-      "flex-grow overflow-hidden whitespace-nowrap text-ellipsis";
-
     const sideBar = () => {
       const sidebar = document.getElementById("sidebar");
 
@@ -243,7 +243,7 @@ export default class ui {
       homeAndDay.className = "flex flex-col gap 2";
 
       sidebar.className =
-        "w-[256px] px-4 flex flex-col gap-2 select-none overflow-y-scroll";
+        "min-w-[256px] px-4 flex flex-col gap-2 select-none overflow-y-scroll";
       sidebar.append(homeAndDay, createNewProjectBtn, projects());
     };
 
@@ -255,7 +255,7 @@ export default class ui {
     addIcon.innerHTML += `<svg class="w-6 h-6" width="24" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="File / Folder_Add"><path id="Vector" d="M12 16V13M12 13V10M12 13H9M12 13H15M3 6V16.8C3 17.9201 3 18.4798 3.21799 18.9076C3.40973 19.2839 3.71547 19.5905 4.0918 19.7822C4.5192 20 5.07899 20 6.19691 20H17.8031C18.921 20 19.48 20 19.9074 19.7822C20.2837 19.5905 20.5905 19.2841 20.7822 18.9078C21.0002 18.48 21.0002 17.9199 21.0002 16.7998L21.0002 9.19978C21.0002 8.07967 21.0002 7.51962 20.7822 7.0918C20.5905 6.71547 20.2839 6.40973 19.9076 6.21799C19.4798 6 18.9201 6 17.8 6H12M3 6H12M3 6C3 4.89543 3.89543 4 5 4H8.67452C9.1637 4 9.40886 4 9.63904 4.05526C9.84311 4.10425 10.0379 4.18526 10.2168 4.29492C10.4186 4.41857 10.5918 4.59182 10.9375 4.9375L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
     addIcon.className = circleBgIconStyleClasses;
     addIcon.classList.add("bg-spl-blue");
-    addIcon.classList.add("text-white")
+    addIcon.classList.add("text-white");
 
     const createNewText = document.createElement("p");
     createNewText.textContent = "Add New Project";
@@ -633,6 +633,7 @@ export default class ui {
 
   static homeView() {
     const content = document.getElementById("content");
+    content.className = "flex flex-col gap-4";
     const todoData = getTodoData();
 
     const yourProjects = document.createElement("h1");
@@ -641,7 +642,38 @@ export default class ui {
     })`;
     yourProjects.className = "text-5xl font-thin";
 
-    content.append(yourProjects);
+    const sortedArray = this.getProjectNamesSorted();
+
+    const projectsContainer = document.createElement("div");
+    projectsContainer.className = "w-full overflow-x-scroll";
+
+    const projects = document.createElement("div");
+    projects.className = "flex gap-2";
+
+    for (let i = 0; i < sortedArray.length; i++) {
+      const project = document.createElement("div");
+      project.className =
+        "flex gap-2 items-center whitespace-nowrap bg-spl-blue text-white font-semibold border-black p-1 pr-4 rounded-full cursor-pointer select-none";
+
+      const emoji = document.createElement("p");
+      emoji.textContent = this.getProjectNameEmoji(sortedArray[i]);
+      emoji.className = circleBgIconStyleClasses;
+      emoji.classList.add("bg-white");
+
+      const projectName = document.createElement("p");
+      projectName.textContent = this.getProjectNameOnly(sortedArray[i]);
+      projectName.className = "w-max";
+
+      project.append(emoji, projectName);
+      project.addEventListener("click", () => {
+        // do something
+      });
+      projects.appendChild(project);
+    }
+
+    projectsContainer.appendChild(projects);
+
+    content.append(yourProjects, projectsContainer);
   }
 
   static newEmojiSelector(emojiSelectorContainer, emojiP) {
