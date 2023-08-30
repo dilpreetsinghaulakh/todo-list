@@ -13,40 +13,40 @@ const getTodoData = () => {
 };
 // WILL BE CHANGED
 export default class ui {
-  static printTodo() {
-    const todoData = getTodoData();
-    const content = document.getElementById("content");
-    content.innerHTML = "";
-    Object.keys(todoData).forEach((element) => {
-      const projectNameP = document.createElement("p");
-      projectNameP.textContent = element;
-      projectNameP.className = "bg-blue-400";
-      content.append(projectNameP);
-      if (todoData[element] !== undefined) {
-        const sortedArray = _.sortBy(todoData[element], ["dueDate"]);
-        // ...arr.reverse()
-        sortedArray.forEach((e) => {
-          const title = document.createElement("p");
-          const description = document.createElement("p");
-          const dueDate = document.createElement("p");
-          const priority = document.createElement("p");
-          title.textContent = e.title;
-          description.textContent = e.description;
-          dueDate.textContent = e.dueDate;
-          priority.textContent = e.priority;
+  // static printTodo() {
+  //   const todoData = getTodoData();
+  //   const content = document.getElementById("content");
+  //   content.innerHTML = "";
+  //   Object.keys(todoData).forEach((element) => {
+  //     const projectNameP = document.createElement("p");
+  //     projectNameP.textContent = element;
+  //     projectNameP.className = "bg-blue-400";
+  //     content.append(projectNameP);
+  //     if (todoData[element] !== undefined) {
+  //       const sortedArray = _.sortBy(todoData[element], ["dueDate"]);
+  //       // ...arr.reverse()
+  //       sortedArray.forEach((e) => {
+  //         const title = document.createElement("p");
+  //         const description = document.createElement("p");
+  //         const dueDate = document.createElement("p");
+  //         const priority = document.createElement("p");
+  //         title.textContent = e.title;
+  //         description.textContent = e.description;
+  //         dueDate.textContent = e.dueDate;
+  //         priority.textContent = e.priority;
 
-          const deleteBtn = document.createElement("button");
-          deleteBtn.textContent = "Delete";
-          deleteBtn.className = "bg-red-400";
-          deleteBtn.addEventListener("click", () => {
-            deleteTodo(element, e.id);
-            ui.printTodo();
-          });
-          content.append(title, description, dueDate, priority, deleteBtn);
-        });
-      }
-    });
-  }
+  //         const deleteBtn = document.createElement("button");
+  //         deleteBtn.textContent = "Delete";
+  //         deleteBtn.className = "bg-red-400";
+  //         deleteBtn.addEventListener("click", () => {
+  //           deleteTodo(element, e.id);
+  //           ui.printTodo();
+  //         });
+  //         content.append(title, description, dueDate, priority, deleteBtn);
+  //       });
+  //     }
+  //   });
+  // }
 
   static navbar(pageTitleName) {
     const navbarDiv = document.getElementById("navbar");
@@ -75,8 +75,6 @@ export default class ui {
   }
 
   static desktopUi() {
-    // const body = document.body;
-
     const topBarUi = () => {
       const topbar = document.getElementById("topbar");
       const appIcon = document.createElement("div");
@@ -228,7 +226,7 @@ export default class ui {
       for (let i = 0; i < homeAndDayArray.length; i++) {
         const span = document.createElement("span");
         span.className =
-          "flex items-center cursor-pointer gap-2 transition hover:text-[#0057FF]";
+          "flex items-center cursor-pointer gap-2 transition hover:text-spl-blue";
 
         const icon = document.createElement("div");
         icon.innerHTML += homeAndDayArray[i].svg;
@@ -256,7 +254,8 @@ export default class ui {
     const addIcon = document.createElement("div");
     addIcon.innerHTML += `<svg class="w-6 h-6" width="24" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="File / Folder_Add"><path id="Vector" d="M12 16V13M12 13V10M12 13H9M12 13H15M3 6V16.8C3 17.9201 3 18.4798 3.21799 18.9076C3.40973 19.2839 3.71547 19.5905 4.0918 19.7822C4.5192 20 5.07899 20 6.19691 20H17.8031C18.921 20 19.48 20 19.9074 19.7822C20.2837 19.5905 20.5905 19.2841 20.7822 18.9078C21.0002 18.48 21.0002 17.9199 21.0002 16.7998L21.0002 9.19978C21.0002 8.07967 21.0002 7.51962 20.7822 7.0918C20.5905 6.71547 20.2839 6.40973 19.9076 6.21799C19.4798 6 18.9201 6 17.8 6H12M3 6H12M3 6C3 4.89543 3.89543 4 5 4H8.67452C9.1637 4 9.40886 4 9.63904 4.05526C9.84311 4.10425 10.0379 4.18526 10.2168 4.29492C10.4186 4.41857 10.5918 4.59182 10.9375 4.9375L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
     addIcon.className = circleBgIconStyleClasses;
-    addIcon.classList.add("bg-blue-200");
+    addIcon.classList.add("bg-spl-blue");
+    addIcon.classList.add("text-white")
 
     const createNewText = document.createElement("p");
     createNewText.textContent = "Add New Project";
@@ -276,25 +275,11 @@ export default class ui {
     });
 
     const projects = () => {
-      const todoData = getTodoData();
       const projects = document.createElement("div");
       projects.id = "sidebarProjects";
       projects.className = "flex flex-col gap-2";
 
-      const onlyNameArray = [];
-      Object.keys(todoData).forEach((key) => {
-        onlyNameArray.push(key);
-      });
-      const sortedKeyArray = onlyNameArray.sort((a, b) =>
-        this.getProjectNameOnly(a)
-          .trim()
-          .toLowerCase()
-          .localeCompare(
-            this.getProjectNameOnly(b).trim().toLowerCase(),
-            undefined,
-            { sensitivity: "base" }
-          )
-      );
+      const sortedKeyArray = this.getProjectNamesSorted();
 
       sortedKeyArray.forEach((key) => {
         const project = document.createElement("span");
@@ -468,7 +453,7 @@ export default class ui {
       const renameBtn = document.createElement("button");
       renameBtn.textContent = "Rename it";
       renameBtn.className =
-        "bg-[#0057FF] text-white font-bold w-fit mx-auto px-8 py-2 rounded-lg hover:shadow-lg hover:shadow-[#0057FF30] transition";
+        "bg-spl-blue text-white font-bold w-fit mx-auto px-8 py-2 rounded-lg hover:shadow-lg hover:shadow-spl-blue/30 transition";
       renameBtn.addEventListener("click", () => {
         var newEmojiValue = "";
         if (!newEmoji.textContent) {
@@ -600,7 +585,7 @@ export default class ui {
       const addBtn = document.createElement("button");
       addBtn.textContent = "Add it";
       addBtn.className =
-        "bg-[#0057FF] text-white font-bold w-fit mx-auto px-8 py-2 rounded-lg hover:shadow-lg hover:shadow-[#0057FF]s/30 transition";
+        "bg-spl-blue text-white font-bold w-fit mx-auto px-8 py-2 rounded-lg hover:shadow-lg hover:shadow-spl-blue/30 transition";
 
       addBtn.addEventListener("click", () => {
         if (emojiP.textContent === "☺︎") {
@@ -644,6 +629,19 @@ export default class ui {
     topBarUi();
     sideBar();
     addBackdrop();
+  }
+
+  static homeView() {
+    const content = document.getElementById("content");
+    const todoData = getTodoData();
+
+    const yourProjects = document.createElement("h1");
+    yourProjects.textContent = `Your Projects (${
+      Object.keys(todoData).length
+    })`;
+    yourProjects.className = "text-5xl font-thin";
+
+    content.append(yourProjects);
   }
 
   static newEmojiSelector(emojiSelectorContainer, emojiP) {
@@ -702,6 +700,26 @@ export default class ui {
     return hslToHex(Math.floor(Math.random() * 360), 75, 90);
   };
 
+  static getProjectNamesSorted() {
+    const todoData = getTodoData();
+    const onlyNameArray = [];
+    Object.keys(todoData).forEach((key) => {
+      onlyNameArray.push(key);
+    });
+    const sortedKeyArray = onlyNameArray.sort((a, b) =>
+      this.getProjectNameOnly(a)
+        .trim()
+        .toLowerCase()
+        .localeCompare(
+          this.getProjectNameOnly(b).trim().toLowerCase(),
+          undefined,
+          { sensitivity: "base" }
+        )
+    );
+
+    return sortedKeyArray;
+  }
+
   static getProjectNameEmoji(name) {
     return name.replace(emojiRegex, "");
   }
@@ -712,6 +730,7 @@ export default class ui {
 
   static initialInsertions() {
     this.desktopUi();
-    this.printTodo();
+    // this.printTodo();
+    this.homeView();
   }
 }
