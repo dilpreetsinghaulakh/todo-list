@@ -431,7 +431,7 @@ export default class ui {
       const newName = document.createElement("input");
       newName.type = "text";
       newName.placeholder = oldName;
-      newName.className = "w-full bg-transparent focus:outline-none border-b";
+      newName.className = "w-full bg-transparent focus:outline-none rounded-none border-b";
 
       newName.addEventListener("keypress", (event) => {
         const regex = /[a-zA-Z0-9 _\-\.]/;
@@ -633,8 +633,7 @@ export default class ui {
 
   static homeView() {
     const content = document.getElementById("content");
-    content.className = "flex flex-col gap-4";
-    const todoData = getTodoData();
+    content.className = "flex flex-col w-full mr-4 gap-4 overflow-x-hidden";
 
     const yourProjects = document.createElement("h1");
     yourProjects.textContent = `Your Projects (${
@@ -653,7 +652,7 @@ export default class ui {
     for (let i = 0; i < sortedArray.length; i++) {
       const project = document.createElement("div");
       project.className =
-        "flex gap-2 items-center whitespace-nowrap bg-spl-blue text-white font-semibold border-black p-1 pr-4 rounded-full cursor-pointer select-none";
+        "flex gap-2 items-center whitespace-nowrap bg-gray-100 focus:bg-gray-200 hover:bg-gray-200 transition text-black font-medium text-sm border-black py-2 px-5 rounded-xl cursor-pointer select-none";
 
       const emoji = document.createElement("p");
       emoji.textContent = this.getProjectNameEmoji(sortedArray[i]);
@@ -664,7 +663,7 @@ export default class ui {
       projectName.textContent = this.getProjectNameOnly(sortedArray[i]);
       projectName.className = "w-max";
 
-      project.append(emoji, projectName);
+      project.append(projectName);
       project.addEventListener("click", () => {
         // do something
       });
@@ -672,6 +671,8 @@ export default class ui {
     }
 
     projectsContainer.appendChild(projects);
+
+    this.getTodoOnly();
 
     content.append(yourProjects, projectsContainer);
   }
@@ -748,8 +749,20 @@ export default class ui {
           { sensitivity: "base" }
         )
     );
-
     return sortedKeyArray;
+  }
+
+  static getTodoOnly() {
+    const todoData = getTodoData();
+    var todo = [];
+    Object.keys(todoData).forEach((key) => {
+      todoData[key].forEach((obj) => {
+        obj["project"] = key;
+        todo.push(obj);
+      });
+    });
+    // todo = _.sortBy(todo, ["title"]); //May be changed      //NOW DISABLED
+    return todo;
   }
 
   static getProjectNameEmoji(name) {
