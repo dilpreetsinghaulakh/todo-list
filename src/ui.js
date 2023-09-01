@@ -431,7 +431,8 @@ export default class ui {
       const newName = document.createElement("input");
       newName.type = "text";
       newName.placeholder = oldName;
-      newName.className = "w-full bg-transparent focus:outline-none rounded-none border-b";
+      newName.className =
+        "w-full bg-transparent focus:outline-none rounded-none border-b";
 
       newName.addEventListener("keypress", (event) => {
         const regex = /[a-zA-Z0-9 _\-\.]/;
@@ -677,11 +678,12 @@ export default class ui {
 
     content.append(yourProjects, projectsContainer);
 
-    const todoOnly = this.getTodoOnly;
+    const todoOnly = this.getTodoOnly();
 
     if (!todoOnly.length) {
       const noTodo = document.createElement("div");
-      noTodo.className = "flex flex-col items-center justify-center flex-grow gap-12 text-gray-500"
+      noTodo.className =
+        "flex flex-col items-center justify-center flex-grow gap-12 text-gray-500";
 
       const noTodoP = document.createElement("p");
       noTodoP.textContent =
@@ -691,11 +693,21 @@ export default class ui {
       arrow.innerHTML = `<svg class="h-full w-full" width="435" height="90" viewBox="0 0 435 90" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M431 10.5926C406.574 30.115 387.281 38.379 355.944 36.9914C327.646 35.7383 296.863 22.3483 270.544 12.5909C237.957 0.510424 173.992 -8.93118 155.057 29.524C140.355 59.3834 162.392 95.0893 197.071 85.3717C210.441 81.6253 217.35 63.8425 211.428 51.5055C205.032 38.1805 185.91 31.7568 172.686 28.6826C137.171 20.4264 113.511 53.572 81.374 59.3935C51.3497 64.8323 29.0541 51.4325 6.31842 33.3103C4.37095 31.758 5.36837 42.086 5.36837 44.6691C5.36837 54.1386 3.46812 49.9358 3.46812 42.776C3.46812 38.1712 1.03353 28.3808 7.26849 30.9964C11.7668 32.8834 21.2221 33.3103 26.2699 33.3103" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
       </svg>`;
-      arrow.className = "w-[50vw] h-auto"
+      arrow.className = "w-[50vw] h-auto";
 
       noTodo.append(noTodoP, arrow);
 
       content.appendChild(noTodo);
+    } else {
+      // Not ready
+      // const todayDate = new Date().toISOString().slice(0, 10);
+      let sorted = _.sortBy(todoOnly, ["dueDate", "priority", "title"]);
+
+      sorted.forEach((element) => {
+        let p = document.createElement("p");
+        p.textContent = element["title"] + " " + element["priority"] + " ";
+        content.append(p);
+      });
     }
   }
 
