@@ -6,16 +6,12 @@ import renameProject from "./renameProject";
 import "./style.css";
 import ui from "./ui";
 
-
 // const sub = document.getElementById("submit");
 
 window.addEventListener("load", () => {
-  createProject("🤘 Personal");
-  ui.printTodo();
-  ui.initialInsertions()
+  createProject("😎Default");
+  ui.initialInsertions();
 });
-
-
 
 // sub.addEventListener("click", () => {
 //   const pro = document.getElementById("selProject");

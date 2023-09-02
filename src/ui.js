@@ -303,6 +303,11 @@ export default class ui {
           editProjectForm(key);
         });
 
+        project.addEventListener("click", (e) => {
+          if (e.target.nodeName === "SPAN" || e.target.nodeName === "P") {
+            openProject(key);
+          }
+        });
         project.addEventListener("mouseover", () => {
           emoji.classList.add("shadow-lg");
           editBtn.classList.remove("w-0");
@@ -627,6 +632,26 @@ export default class ui {
       document.getElementById("backdrop").append(form);
     };
 
+    const openProject = (project) => {
+      const projectName = document.createElement("span");
+      projectName.className = "flex gap-4 items-center";
+
+      const emoji = document.createElement("p");
+      emoji.textContent = this.getProjectNameEmoji(project);
+      emoji.className = circleBgIconStyleClasses;
+      emoji.classList.add("text-4xl");
+      emoji.classList.add("h-16");
+      emoji.classList.add("pastel-rainbow-bg");
+
+      const name = document.createElement("p");
+      name.textContent = this.getProjectNameOnly(project);
+      name.className = "text-5xl font-thin";
+
+      projectName.append(emoji, name);
+
+      this.changeContent(projectName);
+    };
+
     topBarUi();
     sideBar();
     addBackdrop();
@@ -635,7 +660,8 @@ export default class ui {
   static homeView() {
     const todoData = getTodoData();
     const content = document.getElementById("content");
-    content.className = "flex flex-col w-full mr-4 gap-4 overflow-x-hidden";
+    content.className =
+      "flex flex-col w-full h-full mr-4 gap-4 overflow-x-visible transition";
 
     const yourProjects = document.createElement("h1");
     yourProjects.textContent = `Your Projects (${
@@ -676,7 +702,8 @@ export default class ui {
 
     this.getTodoOnly();
 
-    content.append(yourProjects, projectsContainer);
+    const innerContent = document.createElement("div");
+    innerContent.className = "flex-grow flex"
 
     const todoOnly = this.getTodoOnly();
 
@@ -697,7 +724,7 @@ export default class ui {
 
       noTodo.append(noTodoP, arrow);
 
-      content.appendChild(noTodo);
+      innerContent.appendChild(noTodo);
     } else {
       // Not ready
       // const todayDate = new Date().toISOString().slice(0, 10);
@@ -706,9 +733,28 @@ export default class ui {
       sorted.forEach((element) => {
         let p = document.createElement("p");
         p.textContent = element["title"] + " " + element["priority"] + " ";
-        content.append(p);
+        innerContent.append(p);
       });
     }
+    content.append(yourProjects, projectsContainer, innerContent);
+  }
+
+  static changeContent(...args) {
+    const contentContainer = document.getElementById("contentContainer");
+    const content = document.getElementById("content");
+
+    contentContainer.classList.add("blur-xl");
+
+    setTimeout(() => {
+      content.innerHTML = "";
+      // content.append(args);
+      args.forEach((element) => {
+        content.append(element);
+      });
+      contentContainer.classList.remove("blur-xl");
+    }, 150);
+
+    console.log(args);
   }
 
   static newEmojiSelector(emojiSelectorContainer, emojiP) {
@@ -809,7 +855,6 @@ export default class ui {
 
   static initialInsertions() {
     this.desktopUi();
-    // this.printTodo();
     this.homeView();
   }
 }

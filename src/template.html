@@ -7,9 +7,11 @@
   </head>
   <body class="h-screen flex flex-col">
     <div id="topbar"></div>
-    <div class="flex h-full mb-4 overflow-y-auto">
+    <div class="flex" style="height: calc(100% - 6.5rem);">
       <div id="sidebar"></div>
-      <div class="flex-grow border border-slate-500 h-full p-8 mr-4 overflow-y-scroll overflow-x-hidden rounded-xl" id="content"></div>
+      <div class="transition flex-grow" id="contentContainer">
+        <div id="content"></div>
+      </div>
     </div>
 
 
