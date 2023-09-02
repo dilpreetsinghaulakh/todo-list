@@ -743,15 +743,14 @@ export default class ui {
     const contentContainer = document.getElementById("contentContainer");
     const content = document.getElementById("content");
 
-    contentContainer.classList.add("blur-xl");
+    contentContainer.classList.add("blur-md");
 
     setTimeout(() => {
       content.innerHTML = "";
-      // content.append(args);
       args.forEach((element) => {
         content.append(element);
       });
-      contentContainer.classList.remove("blur-xl");
+      contentContainer.classList.remove("blur-md");
     }, 150);
 
     console.log(args);
