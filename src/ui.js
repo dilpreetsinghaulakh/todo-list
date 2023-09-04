@@ -755,7 +755,7 @@ export default class ui {
         innerContent.append(p);
       });
     }
-    content.append(yourProjects, projectsContainer, innerContent);
+    this.changeContent(yourProjects, projectsContainer, innerContent);
   }
 
   static changeContent(...args) {
