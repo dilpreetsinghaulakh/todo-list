@@ -763,12 +763,14 @@ export default class ui {
     const content = document.getElementById("content");
 
     contentContainer.classList.add("blur-md");
+    contentContainer.classList.add("opacity-25");
 
     setTimeout(() => {
       content.innerHTML = "";
       args.forEach((element) => {
         content.append(element);
       });
+      contentContainer.classList.remove("opacity-25");
       contentContainer.classList.remove("blur-md");
     }, 150);
 
