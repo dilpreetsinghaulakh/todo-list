@@ -668,7 +668,35 @@ export default class ui {
 
       projectName.append(emoji, name);
 
-      this.changeContent(projectName);
+      const projectTodoData = getTodoData()[project];
+
+      const todo = document.createElement("div");
+
+      if (!projectTodoData.length) {
+        const noTodo = document.createElement("p");
+        noTodo.textContent = "No Todo";
+        noTodo.className = "text-gray-500";
+
+        todo.appendChild(noTodo);
+        todo.className = "flex items-center flex-grow justify-center";
+      } else {
+        printTodo(todo, projectTodoData);
+      }
+
+      this.changeContent(projectName, todo);
+    };
+
+    const printTodo = (todoDiv, todoArray) => {
+      // NOT FINAL
+      if (!todoDiv.childElementCount) {
+        for (let i = 0; i < todoArray.length; i++) {
+          const todoSpan = document.createElement("span");
+          const todoTitle = document.createElement("p");
+          todoTitle.textContent = todoArray[i].title;
+          todoSpan.append(todoTitle);
+          todoDiv.appendChild(todoSpan);
+        }
+      }
     };
 
     topBarUi();
@@ -773,8 +801,6 @@ export default class ui {
       contentContainer.classList.remove("opacity-25");
       contentContainer.classList.remove("blur-md");
     }, 150);
-
-    console.log(args);
   }
 
   static newEmojiSelector(emojiSelectorContainer, emojiP) {
