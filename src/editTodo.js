@@ -19,7 +19,7 @@ export default function editTodo(
   ].dueDate = newDueDate;
   todoData[projectName][
     todoData[projectName].findIndex((item) => (item.id = todoId))
-  ].priority = newPriority;
+  ].priority = parseInt(newPriority);
 
   localStorage.setItem("todo", JSON.stringify(todoData));
 }

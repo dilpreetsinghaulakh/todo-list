@@ -20,7 +20,7 @@ export default function addTodo(projectName) {
       title.value,
       description.value,
       dueDate.value,
-      priority.options[priority.selectedIndex].value
+      parseInt(priority.options[priority.selectedIndex].value)
     )
   );
   localStorage.setItem("todo", JSON.stringify(projects));
