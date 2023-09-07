@@ -10,7 +10,7 @@ export default function createTodo(
     title: title,
     description: description,
     dueDate: dueDate,
-    priority: priority,
+    priority: parseInt(priority),
     isDone: false,
   };
 }
