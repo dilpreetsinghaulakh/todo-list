@@ -681,6 +681,7 @@ export default class ui {
         todo.appendChild(noTodo);
         todo.className = "flex items-center flex-grow justify-center";
       } else {
+        todo.className = "flex-grow";
         printTodo(todo, projectTodoData);
       }
 
@@ -718,7 +719,7 @@ export default class ui {
 
       const dueDate = document.createElement("input");
       dueDate.type = "date";
-      dueDate.className = "border rounded-md px-4";
+      dueDate.className = "border rounded-md px-4 focus:border-spl-blue focus:outline-none";
       dueDate.addEventListener("change", () => {
         dueDate.classList.remove(errorClass);
       });
@@ -798,6 +799,23 @@ export default class ui {
         }
       });
 
+      const resetInputs = () => {
+        var oldBg;
+
+        priority.classList.forEach((e) => {
+          if (e.startsWith("bg")) {
+            oldBg = e;
+          }
+        });
+
+        title.value = "";
+        description.value = "";
+        dueDate.value = "";
+        priority.value = "0";
+        priority.classList.remove(oldBg);
+        priority.classList.add("bg-gray-100");
+      };
+
       addBtn.addEventListener("click", () => {
         if (!title.value && !dueDate.value) {
           title.classList.add(errorClass);
@@ -818,6 +836,8 @@ export default class ui {
             dueDate.value,
             priority.value
           );
+
+          resetInputs();
         }
       });
 
