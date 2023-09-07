@@ -4,6 +4,7 @@ import createProject from "./createProject";
 import { Picker } from "emoji-mart";
 var _ = require("lodash");
 import deleteTodo from "./deleteTodo";
+import addTodo from "./addTodo";
 
 const projectNameRegex = /[^A-Z a-z0-9_.-]/g;
 const emojiRegex = /[\w()_.-]/g;
@@ -683,7 +684,7 @@ export default class ui {
         printTodo(todo, projectTodoData);
       }
 
-      this.changeContent(projectName, todo);
+      this.changeContent(projectName, todo, addTodoUi(project));
     };
 
     const printTodo = (todoDiv, todoArray) => {
@@ -697,6 +698,130 @@ export default class ui {
           todoDiv.appendChild(todoSpan);
         }
       }
+    };
+
+    const addTodoUi = (project) => {
+      const errorClass = "border-red-500";
+      const container = document.createElement("div");
+      container.className = "flex flex-col w-full transition-all";
+
+      const row1 = document.createElement("div");
+      row1.className = "flex gap-4";
+
+      const title = document.createElement("input");
+      title.placeholder = "Title";
+      title.className =
+        "flex-grow border rounded-md outline-none focus:border-spl-blue px-1";
+      title.addEventListener("change", () => {
+        title.classList.remove(errorClass);
+      });
+
+      const dueDate = document.createElement("input");
+      dueDate.type = "date";
+      dueDate.className = "border rounded-md px-4";
+      dueDate.addEventListener("change", () => {
+        dueDate.classList.remove(errorClass);
+      });
+
+      const priority = document.createElement("select");
+      priority.className =
+        "appearance-none px-4 bg-gray-100 rounded-md outline-none border focus:border-spl-blue";
+      priority.addEventListener("change", () => {
+        var oldBg;
+
+        priority.classList.forEach((e) => {
+          if (e.startsWith("bg")) {
+            oldBg = e;
+          }
+        });
+
+        console.log(oldBg);
+
+        switch (parseInt(priority.value)) {
+          case -1:
+            priority.classList.remove(oldBg);
+            priority.classList.add("bg-green-100");
+            break;
+          case 0:
+            priority.classList.remove(oldBg);
+            priority.classList.add("bg-gray-100");
+            break;
+          case 1:
+            priority.classList.remove(oldBg);
+            priority.classList.add("bg-red-100");
+            break;
+        }
+      });
+
+      const low = document.createElement("option");
+      low.textContent = "Low";
+      low.value = -1;
+
+      const normal = document.createElement("option");
+      normal.textContent = "Normal";
+      normal.value = 0;
+      normal.selected = true;
+
+      const high = document.createElement("option");
+      high.textContent = "High";
+      high.value = 1;
+
+      priority.append(low, normal, high);
+
+      const addBtn = document.createElement("button");
+      addBtn.innerHTML = `<svg class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M6 12H12M12 12H18M12 12V18M12 12V6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      addBtn.classList =
+        "bg-spl-blue border border-[#0549C7] hover:bg-spl-blue/95 aspect-square w-10 h-10 flex items-center justify-center rounded-md";
+
+      row1.append(title, dueDate, priority, addBtn);
+
+      const description = document.createElement("textarea");
+      description.placeholder = "Description (Optional)";
+      description.className = "h-0 transition-all outline-none";
+
+      container.append(row1, description);
+
+      const descriptionOpenClasses = [
+        "p-1",
+        "h-[7.25rem]",
+        "mt-6",
+        "border",
+        "focus:border-spl-blue",
+        "rounded-md",
+      ];
+
+      row1.addEventListener("click", (e) => {
+        if (e.target.nodeName !== "BUTTON" && e.target.nodeName !== "svg") {
+          descriptionOpenClasses.forEach((element) => {
+            description.classList.add(element);
+          });
+        }
+      });
+
+      addBtn.addEventListener("click", () => {
+        if (!title.value && !dueDate.value) {
+          title.classList.add(errorClass);
+          dueDate.classList.add(errorClass);
+        } else if (!title.value) {
+          title.classList.add(errorClass);
+        } else if (!dueDate.value) {
+          dueDate.classList.add(errorClass);
+        } else {
+          descriptionOpenClasses.forEach((element) => {
+            description.classList.remove(element);
+          });
+
+          addTodo(
+            project,
+            title.value,
+            description.value,
+            dueDate.value,
+            priority.value
+          );
+        }
+      });
+
+      return container;
     };
 
     topBarUi();
