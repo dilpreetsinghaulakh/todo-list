@@ -4,22 +4,21 @@ export default function editTodo(
   newTitle,
   newDescription,
   newDueDate,
-  newPriority
+  newPriority,
+  newIsDone
 ) {
   const todoData = JSON.parse(localStorage.getItem("todo"));
 
-  todoData[projectName][
-    todoData[projectName].findIndex((item) => (item.id = todoId))
-  ].title = newTitle;
-  todoData[projectName][
-    todoData[projectName].findIndex((item) => (item.id = todoId))
-  ].description = newDescription;
-  todoData[projectName][
-    todoData[projectName].findIndex((item) => (item.id = todoId))
-  ].dueDate = newDueDate;
-  todoData[projectName][
-    todoData[projectName].findIndex((item) => (item.id = todoId))
-  ].priority = parseInt(newPriority);
+  const todo =
+    todoData[projectName][
+      todoData[projectName].findIndex((item) => (item.id = todoId))
+    ];
+
+  todo.title = newTitle;
+  todo.description = newDescription;
+  todo.dueDate = newDueDate;
+  todo.priority = parseInt(newPriority);
+  todo.isDone = newIsDone;
 
   localStorage.setItem("todo", JSON.stringify(todoData));
 }
