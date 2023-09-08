@@ -5,6 +5,7 @@ import { Picker } from "emoji-mart";
 var _ = require("lodash");
 import deleteTodo from "./deleteTodo";
 import addTodo from "./addTodo";
+import editTodo from "./editTodo";
 
 const projectNameRegex = /[^A-Z a-z0-9_.-]/g;
 const emojiRegex = /[\w()_.-]/g;
@@ -681,22 +682,104 @@ export default class ui {
         todo.appendChild(noTodo);
         todo.className = "flex items-center flex-grow justify-center";
       } else {
-        todo.className = "flex-grow";
-        printTodo(todo, projectTodoData);
+        todo.className =
+          "flex-grow flex flex-col gap-4 overflow-y-scroll rounded-md";
+        printTodo(todo, projectTodoData, project);
       }
 
       this.changeContent(projectName, todo, addTodoUi(project));
     };
 
-    const printTodo = (todoDiv, todoArray) => {
+    const printTodo = (todoDiv, todoArray, project) => {
       // NOT FINAL
       if (!todoDiv.childElementCount) {
         for (let i = 0; i < todoArray.length; i++) {
-          const todoSpan = document.createElement("span");
-          const todoTitle = document.createElement("p");
-          todoTitle.textContent = todoArray[i].title;
-          todoSpan.append(todoTitle);
-          todoDiv.appendChild(todoSpan);
+          const todoContainer = document.createElement("div");
+          todoContainer.className = "border rounded-md p-4";
+
+          const row1 = document.createElement("div");
+          row1.className = "flex justify-between gap-2 items-center";
+
+          const checkBox = document.createElement("div");
+          // checkBox.type = "checkbox";
+          checkBox.className =
+            "w-4 min-w-[1rem] h-4 select-none bg-gray-100 border  rounded hover:bg-gray-200 transition cursor-pointer flex items-center justify-center";
+
+          const checkBoxNoneActive = [
+            "bg-gray-100",
+            "border-gray-200",
+            "hover:bg-gray-200",
+          ];
+          const checkBoxActive = [
+            "bg-spl-blue",
+            "border-[#0549C7]",
+            "hover:bg-spl-blue/90",
+          ];
+
+          checkBox.addEventListener("click", () => {
+            if (checkBox.innerHTML) {
+              checkBoxActive.forEach((element) => {
+                checkBox.classList.remove(element);
+              });
+              checkBoxNoneActive.forEach((element) => {
+                checkBox.classList.add(element);
+              });
+              checkBox.innerHTML = "";
+
+              editTodo(
+                // console.log(
+                project,
+                todoArray[i].id,
+                todoArray[i].title,
+                todoArray[i].description,
+                todoArray[i].dueDate,
+                todoArray[i].priority,
+                false
+              );
+            } else {
+              checkBoxNoneActive.forEach((element) => {
+                checkBox.classList.remove(element);
+              });
+              checkBoxActive.forEach((element) => {
+                checkBox.classList.add(element);
+              });
+
+              checkBox.innerHTML = `<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+              // console.log(
+              editTodo(
+                project,
+                todoArray[i].id,
+                todoArray[i].title,
+                todoArray[i].description,
+                todoArray[i].dueDate,
+                todoArray[i].priority,
+                true
+              );
+            }
+          });
+
+          // const check = document.createElement;
+
+          const title = document.createElement("p");
+          title.textContent = todoArray[i].title;
+          title.className = "font-bold flex-grow line-clamp-2";
+
+          const dueDate = document.createElement("p");
+          dueDate.textContent = todoArray[i].dueDate;
+          dueDate.className = "min-w-fit text-gray-400";
+
+          row1.append(checkBox, title, dueDate);
+          todoContainer.appendChild(row1);
+
+          if (todoArray[i].description) {
+            const description = document.createElement("p");
+            description.textContent = todoArray[i].description;
+            description.className = "text-sm text-gray-600 mt-2";
+            todoContainer.appendChild(description);
+          }
+
+          todoDiv.appendChild(todoContainer);
         }
       }
     };
@@ -704,7 +787,7 @@ export default class ui {
     const addTodoUi = (project) => {
       const errorClass = "border-red-500";
       const container = document.createElement("div");
-      container.className = "flex flex-col w-full transition-all";
+      container.className = "flex flex-col w-full transition-all static";
 
       const row1 = document.createElement("div");
       row1.className = "flex gap-4";
@@ -793,13 +876,13 @@ export default class ui {
       const description = document.createElement("textarea");
       description.placeholder = "Description (Optional)";
       description.className =
-        "transition-all outline-none flex-grow p-1 border focus:border-spl-blue rounded-md";
+        "transition-all outline-none flex-grow p-1 border focus:border-spl-blue rounded-md resize-none";
 
       row2.append(description);
 
       container.append(row1, row2);
 
-      const row2OpenClasses = ["h-[7.25rem]", "mt-6"];
+      const row2OpenClasses = ["h-[7.75rem]", "mt-4"];
 
       var isDescriptionOpen = false;
 
