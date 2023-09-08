@@ -719,14 +719,15 @@ export default class ui {
 
       const dueDate = document.createElement("input");
       dueDate.type = "date";
-      dueDate.className = "border rounded-md px-4 focus:border-spl-blue focus:outline-none";
+      dueDate.className =
+        "border rounded-md px-4 focus:border-spl-blue focus:outline-none cursor-pointer";
       dueDate.addEventListener("change", () => {
         dueDate.classList.remove(errorClass);
       });
 
       const priority = document.createElement("select");
       priority.className =
-        "appearance-none px-4 bg-gray-100 rounded-md outline-none border focus:border-spl-blue";
+        "appearance-none px-4 bg-gray-100 rounded-md outline-none border focus:border-spl-blue cursor-pointer";
       priority.addEventListener("change", () => {
         var oldBg;
 
@@ -735,8 +736,6 @@ export default class ui {
             oldBg = e;
           }
         });
-
-        console.log(oldBg);
 
         switch (parseInt(priority.value)) {
           case -1:
@@ -768,34 +767,60 @@ export default class ui {
       high.value = 1;
 
       priority.append(low, normal, high);
+      const btnClasses =
+        "bg-spl-blue border border-[#0549C7] hover:bg-spl-blue/95 aspect-square w-10 h-10 flex items-center justify-center";
+
+      const buttonsContainer = document.createElement("div");
+      buttonsContainer.className = "flex rounded-md overflow-hidden";
 
       const addBtn = document.createElement("button");
       addBtn.innerHTML = `<svg class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M6 12H12M12 12H18M12 12V18M12 12V6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-      addBtn.classList =
-        "bg-spl-blue border border-[#0549C7] hover:bg-spl-blue/95 aspect-square w-10 h-10 flex items-center justify-center rounded-md";
+      addBtn.className = btnClasses;
+      addBtn.classList.add("rounded-l-md");
 
-      row1.append(title, dueDate, priority, addBtn);
+      const openBtn = document.createElement("button");
+      openBtn.innerHTML = `<svg class="w-6 h-6 -rotate-0 transition-transform" id="arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M19 9L12 16L5 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      openBtn.className = btnClasses;
+      openBtn.classList.add("rounded-r-md");
+
+      buttonsContainer.append(addBtn, openBtn);
+
+      row1.append(title, dueDate, priority, buttonsContainer);
+
+      const row2 = document.createElement("div");
+      row2.className = "flex gap-4 h-0 overflow-hidden transition-all";
 
       const description = document.createElement("textarea");
       description.placeholder = "Description (Optional)";
-      description.className = "h-0 transition-all outline-none";
+      description.className =
+        "transition-all outline-none flex-grow p-1 border focus:border-spl-blue rounded-md";
 
-      container.append(row1, description);
+      row2.append(description);
 
-      const descriptionOpenClasses = [
-        "p-1",
-        "h-[7.25rem]",
-        "mt-6",
-        "border",
-        "focus:border-spl-blue",
-        "rounded-md",
-      ];
+      container.append(row1, row2);
 
-      row1.addEventListener("click", (e) => {
-        if (e.target.nodeName !== "BUTTON" && e.target.nodeName !== "svg") {
-          descriptionOpenClasses.forEach((element) => {
-            description.classList.add(element);
+      const row2OpenClasses = ["h-[7.25rem]", "mt-6"];
+
+      var isDescriptionOpen = false;
+
+      openBtn.addEventListener("click", (e) => {
+        const icon = document.getElementById("arrow");
+        if (isDescriptionOpen) {
+          row2OpenClasses.forEach((element) => {
+            row2.classList.remove(element);
           });
+
+          icon.classList.add("-rotate-0");
+          icon.classList.remove("-rotate-180");
+          isDescriptionOpen = false;
+        } else {
+          row2OpenClasses.forEach((element) => {
+            row2.classList.add(element);
+          });
+
+          icon.classList.remove("-rotate-0");
+          icon.classList.add("-rotate-180");
+          isDescriptionOpen = true;
         }
       });
 
@@ -825,9 +850,13 @@ export default class ui {
         } else if (!dueDate.value) {
           dueDate.classList.add(errorClass);
         } else {
-          descriptionOpenClasses.forEach((element) => {
-            description.classList.remove(element);
+          row2OpenClasses.forEach((element) => {
+            row2.classList.remove(element);
           });
+
+          const icon = document.getElementById("arrow");
+          icon.classList.add("-rotate-0");
+          icon.classList.remove("-rotate-180");
 
           addTodo(
             project,
@@ -909,9 +938,7 @@ export default class ui {
         "You don't have any todo, add one by going into a project.";
 
       const arrow = document.createElement("div");
-      arrow.innerHTML = `<svg class="h-full w-full" width="435" height="90" viewBox="0 0 435 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M431 10.5926C406.574 30.115 387.281 38.379 355.944 36.9914C327.646 35.7383 296.863 22.3483 270.544 12.5909C237.957 0.510424 173.992 -8.93118 155.057 29.524C140.355 59.3834 162.392 95.0893 197.071 85.3717C210.441 81.6253 217.35 63.8425 211.428 51.5055C205.032 38.1805 185.91 31.7568 172.686 28.6826C137.171 20.4264 113.511 53.572 81.374 59.3935C51.3497 64.8323 29.0541 51.4325 6.31842 33.3103C4.37095 31.758 5.36837 42.086 5.36837 44.6691C5.36837 54.1386 3.46812 49.9358 3.46812 42.776C3.46812 38.1712 1.03353 28.3808 7.26849 30.9964C11.7668 32.8834 21.2221 33.3103 26.2699 33.3103" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
-      </svg>`;
+      arrow.innerHTML = `<svg class="h-full w-full" width="435" height="90" viewBox="0 0 435 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M431 10.5926C406.574 30.115 387.281 38.379 355.944 36.9914C327.646 35.7383 296.863 22.3483 270.544 12.5909C237.957 0.510424 173.992 -8.93118 155.057 29.524C140.355 59.3834 162.392 95.0893 197.071 85.3717C210.441 81.6253 217.35 63.8425 211.428 51.5055C205.032 38.1805 185.91 31.7568 172.686 28.6826C137.171 20.4264 113.511 53.572 81.374 59.3935C51.3497 64.8323 29.0541 51.4325 6.31842 33.3103C4.37095 31.758 5.36837 42.086 5.36837 44.6691C5.36837 54.1386 3.46812 49.9358 3.46812 42.776C3.46812 38.1712 1.03353 28.3808 7.26849 30.9964C11.7668 32.8834 21.2221 33.3103 26.2699 33.3103" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>`;
       arrow.className = "w-[50vw] h-auto";
 
       noTodo.append(noTodoP, arrow);
