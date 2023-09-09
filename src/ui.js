@@ -671,6 +671,7 @@ export default class ui {
       projectName.append(emoji, name);
 
       const projectTodoData = getTodoData()[project];
+      // console.log(projectTodoData);
 
       const todo = document.createElement("div");
 
@@ -701,33 +702,37 @@ export default class ui {
           row1.className = "flex justify-between gap-2 items-center";
 
           const checkBox = document.createElement("div");
-          // checkBox.type = "checkbox";
           checkBox.className =
             "w-4 min-w-[1rem] h-4 select-none bg-gray-100 border  rounded hover:bg-gray-200 transition cursor-pointer flex items-center justify-center";
 
-          const checkBoxNoneActive = [
+          const checkBoxNoneActiveClasses = [
             "bg-gray-100",
             "border-gray-200",
             "hover:bg-gray-200",
           ];
-          const checkBoxActive = [
+          const checkBoxActiveClasses = [
             "bg-spl-blue",
             "border-[#0549C7]",
             "hover:bg-spl-blue/90",
           ];
 
+          todoContainer.addEventListener("click", () => {
+            console.log(
+              todoArray[i].project,
+              todoArray[i].id,
+              todoArray[i].title,
+              todoArray[i].description,
+              todoArray[i].dueDate,
+              todoArray[i].priority,
+              todoArray[i].isDone
+            );
+          });
+
           checkBox.addEventListener("click", () => {
             if (checkBox.innerHTML) {
-              checkBoxActive.forEach((element) => {
-                checkBox.classList.remove(element);
-              });
-              checkBoxNoneActive.forEach((element) => {
-                checkBox.classList.add(element);
-              });
-              checkBox.innerHTML = "";
-
+              console.log("true")
+              checkBoxNoneActive();
               editTodo(
-                // console.log(
                 project,
                 todoArray[i].id,
                 todoArray[i].title,
@@ -737,16 +742,9 @@ export default class ui {
                 false
               );
             } else {
-              checkBoxNoneActive.forEach((element) => {
-                checkBox.classList.remove(element);
-              });
-              checkBoxActive.forEach((element) => {
-                checkBox.classList.add(element);
-              });
+              console.log("false")
 
-              checkBox.innerHTML = `<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-              // console.log(
+              checkBoxActive();
               editTodo(
                 project,
                 todoArray[i].id,
@@ -764,6 +762,38 @@ export default class ui {
           const title = document.createElement("p");
           title.textContent = todoArray[i].title;
           title.className = "font-bold flex-grow line-clamp-2";
+
+          // Placed here to let title initialize -->
+          const checkBoxNoneActive = () => {
+            checkBoxActiveClasses.forEach((element) => {
+              checkBox.classList.remove(element);
+            });
+            checkBoxNoneActiveClasses.forEach((element) => {
+              checkBox.classList.add(element);
+            });
+            checkBox.innerHTML = "";
+
+            title.classList.remove("line-through");
+          };
+
+          const checkBoxActive = () => {
+            checkBoxNoneActiveClasses.forEach((element) => {
+              checkBox.classList.remove(element);
+            });
+            checkBoxActiveClasses.forEach((element) => {
+              checkBox.classList.add(element);
+            });
+            checkBox.innerHTML = `<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+            title.classList.add("line-through");
+          };
+
+          if (todoArray[i].isDone) {
+            checkBoxActive();
+          } else {
+            checkBoxNoneActive();
+          }
+          // <--
 
           const dueDate = document.createElement("p");
           dueDate.textContent = todoArray[i].dueDate;
