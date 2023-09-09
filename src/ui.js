@@ -684,7 +684,7 @@ export default class ui {
         todo.className = "flex items-center flex-grow justify-center";
       } else {
         todo.className =
-          "flex-grow flex flex-col gap-4 overflow-y-scroll rounded-md";
+          "flex-grow flex flex-col gap-4 overflow-y-scroll rounded-md bg-gray-50 p-2 border";
         printTodo(todo, projectTodoData, project);
       }
 
@@ -692,16 +692,16 @@ export default class ui {
     };
 
     const printTodo = (todoDiv, todoArray, project) => {
-      // NOT FINAL
       if (!todoDiv.childElementCount) {
         for (let i = 0; i < todoArray.length; i++) {
           const todoContainer = document.createElement("div");
-          todoContainer.className = "border rounded-md p-4";
+          todoContainer.className = "border rounded-md p-4 bg-white";
 
           const row1 = document.createElement("div");
           row1.className = "flex justify-between gap-2 items-center";
 
           const checkBox = document.createElement("div");
+          checkBox.id = "checkbox";
           checkBox.className =
             "w-4 min-w-[1rem] h-4 select-none bg-gray-100 border  rounded hover:bg-gray-200 transition cursor-pointer flex items-center justify-center";
 
@@ -774,7 +774,7 @@ export default class ui {
             checkBoxActiveClasses.forEach((element) => {
               checkBox.classList.add(element);
             });
-            checkBox.innerHTML = `<svg class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            checkBox.innerHTML = `<svg id="checkbox" class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="checkbox" d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
             title.classList.add("line-through");
           };
@@ -793,12 +793,68 @@ export default class ui {
           row1.append(checkBox, title, dueDate);
           todoContainer.appendChild(row1);
 
+          const description = document.createElement("p");
           if (todoArray[i].description) {
-            const description = document.createElement("p");
             description.textContent = todoArray[i].description;
-            description.className = "text-sm text-gray-600 mt-2";
+            description.className = "text-sm text-gray-600 mt-2 line-clamp-2";
             todoContainer.appendChild(description);
           }
+
+          const row3 = document.createElement("div");
+          row3.className =
+            "flex justify-center gap-8 h-0 overflow-hidden transition-all";
+
+          const btnClasses =
+            "text-white font-bold px-8 py-2 rounded-lg hover:shadow-lg w-fit transition";
+
+          const editBtn = document.createElement("button");
+          editBtn.textContent = "Edit";
+          editBtn.className = btnClasses;
+          editBtn.classList.add("bg-spl-blue");
+          editBtn.classList.add("hover:shadow-spl-blue/30");
+
+          editBtn.addEventListener("click", () => {
+            // do something
+          });
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.textContent = "Delete";
+          deleteBtn.className = btnClasses;
+          deleteBtn.classList.add("bg-red-500");
+          deleteBtn.classList.add("hover:shadow-red-500/30");
+
+          deleteBtn.addEventListener("click", () => {
+            deleteTodo(project, todoArray[i].id);
+          });
+
+          row3.append(editBtn, deleteBtn);
+          todoContainer.appendChild(row3);
+
+          todoContainer.addEventListener("click", (e) => {
+            if (e.target.id !== "checkbox") {
+              row3.classList.remove("h-0");
+              row3.classList.add("h-10");
+
+              if (description.textContent) {
+                row3.classList.add("mt-4");
+              }
+
+              description.classList.remove("line-clamp-2");
+
+              document.addEventListener("click", function (e) {
+                if (
+                  !todoContainer.contains(e.target) &&
+                  e.target.id !== "checkbox"
+                ) {
+                  row3.classList.add("h-0");
+                  row3.classList.remove("h-10");
+                  row3.classList.remove("mt-4");
+
+                  description.classList.add("line-clamp-2");
+                }
+              });
+            }
+          });
 
           todoDiv.appendChild(todoContainer);
         }
