@@ -674,194 +674,215 @@ export default class ui {
       // console.log(projectTodoData);
 
       const todo = document.createElement("div");
+      todo.id = "todoDiv";
 
-      if (!projectTodoData.length) {
-        const noTodo = document.createElement("p");
-        noTodo.textContent = "No Todo";
-        noTodo.className = "text-gray-500";
+      printTodo(todo, projectTodoData, project);
 
-        todo.appendChild(noTodo);
-        todo.className = "flex items-center flex-grow justify-center";
-      } else {
-        todo.className =
-          "flex-grow flex flex-col gap-4 overflow-y-scroll rounded-md bg-gray-50 p-2 border";
-        printTodo(todo, projectTodoData, project);
-      }
-
-      this.changeContent(projectName, todo, addTodoUi(project));
+      this.changeContent(projectName, todo, addTodoUi(project, todo));
     };
 
+    const noTodoContainerClasses =
+      "flex items-center flex-grow justify-center rounded-md bg-gray-50 border";
+    const withTodoContainerClasses =
+      "flex-grow flex flex-col gap-4 overflow-y-scroll rounded-md bg-gray-50 p-2 border";
+
     const printTodo = (todoDiv, todoArray, project) => {
-      if (!todoDiv.childElementCount) {
+      if (!todoArray.length) {
+        todoDiv.appendChild(getNoTodoDiv());
+        todoDiv.className = noTodoContainerClasses;
+      } else {
+        todoDiv.className = withTodoContainerClasses;
+
         for (let i = 0; i < todoArray.length; i++) {
-          const todoContainer = document.createElement("div");
-          todoContainer.className = "border rounded-md p-4 bg-white";
-
-          const row1 = document.createElement("div");
-          row1.className = "flex justify-between gap-2 items-center";
-
-          const checkBox = document.createElement("div");
-          checkBox.id = "checkbox";
-          checkBox.className =
-            "w-4 min-w-[1rem] h-4 select-none bg-gray-100 border  rounded hover:bg-gray-200 transition cursor-pointer flex items-center justify-center";
-
-          if (todoArray[i].priority === -1) {
-            checkBox.classList.add("shadow-center-green");
-          } else if (todoArray[i].priority === 1) {
-            checkBox.classList.add("shadow-center-red");
-          } else {
-            checkBox.classList.add("shadow-center-gray");
-          }
-
-          const checkBoxNoneActiveClasses = [
-            "bg-gray-100",
-            "border-gray-200",
-            "hover:bg-gray-200",
-          ];
-          const checkBoxActiveClasses = [
-            "bg-spl-blue",
-            "border-[#0549C7]",
-            "hover:bg-spl-blue/90",
-          ];
-
-          checkBox.addEventListener("click", () => {
-            if (checkBox.innerHTML) {
-              checkBoxNoneActive();
-              editTodo(
-                project,
-                todoArray[i].id,
-                todoArray[i].title,
-                todoArray[i].description,
-                todoArray[i].dueDate,
-                todoArray[i].priority,
-                false
-              );
-            } else {
-              checkBoxActive();
-              editTodo(
-                project,
-                todoArray[i].id,
-                todoArray[i].title,
-                todoArray[i].description,
-                todoArray[i].dueDate,
-                todoArray[i].priority,
-                true
-              );
-            }
-          });
-
-          const title = document.createElement("p");
-          title.textContent = todoArray[i].title;
-          title.className = "font-bold flex-grow line-clamp-2";
-
-          // Placed here to let title initialize -->
-          const checkBoxNoneActive = () => {
-            checkBoxActiveClasses.forEach((element) => {
-              checkBox.classList.remove(element);
-            });
-            checkBoxNoneActiveClasses.forEach((element) => {
-              checkBox.classList.add(element);
-            });
-            checkBox.innerHTML = "";
-
-            title.classList.remove("line-through");
-          };
-
-          const checkBoxActive = () => {
-            checkBoxNoneActiveClasses.forEach((element) => {
-              checkBox.classList.remove(element);
-            });
-            checkBoxActiveClasses.forEach((element) => {
-              checkBox.classList.add(element);
-            });
-            checkBox.innerHTML = `<svg id="checkbox" class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="checkbox" d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-
-            title.classList.add("line-through");
-          };
-
-          if (todoArray[i].isDone) {
-            checkBoxActive();
-          } else {
-            checkBoxNoneActive();
-          }
-          // <--
-
-          const dueDate = document.createElement("p");
-          dueDate.textContent = todoArray[i].dueDate;
-          dueDate.className = "min-w-fit text-gray-400";
-
-          row1.append(checkBox, title, dueDate);
-          todoContainer.appendChild(row1);
-
-          const description = document.createElement("p");
-          if (todoArray[i].description) {
-            description.textContent = todoArray[i].description;
-            description.className = "text-sm text-gray-600 mt-2 line-clamp-2";
-            todoContainer.appendChild(description);
-          }
-
-          const row3 = document.createElement("div");
-          row3.className =
-            "flex justify-center gap-8 h-0 overflow-hidden transition-all";
-
-          const btnClasses =
-            "text-white font-bold px-8 py-2 rounded-lg hover:shadow-lg w-fit transition";
-
-          const editBtn = document.createElement("button");
-          editBtn.textContent = "Edit";
-          editBtn.className = btnClasses;
-          editBtn.classList.add("bg-spl-blue");
-          editBtn.classList.add("hover:shadow-spl-blue/30");
-
-          editBtn.addEventListener("click", () => {
-            // do something
-          });
-
-          const deleteBtn = document.createElement("button");
-          deleteBtn.textContent = "Delete";
-          deleteBtn.className = btnClasses;
-          deleteBtn.classList.add("bg-red-500");
-          deleteBtn.classList.add("hover:shadow-red-500/30");
-
-          deleteBtn.addEventListener("click", () => {
-            deleteTodo(project, todoArray[i].id);
-          });
-
-          row3.append(editBtn, deleteBtn);
-          todoContainer.appendChild(row3);
-
-          todoContainer.addEventListener("click", (e) => {
-            if (e.target.id !== "checkbox") {
-              row3.classList.remove("h-0");
-              row3.classList.add("h-10");
-
-              if (description.textContent) {
-                row3.classList.add("mt-4");
-              }
-
-              description.classList.remove("line-clamp-2");
-
-              document.addEventListener("click", function (e) {
-                if (
-                  !todoContainer.contains(e.target) &&
-                  e.target.id !== "checkbox"
-                ) {
-                  row3.classList.add("h-0");
-                  row3.classList.remove("h-10");
-                  row3.classList.remove("mt-4");
-
-                  description.classList.add("line-clamp-2");
-                }
-              });
-            }
-          });
-
-          todoDiv.appendChild(todoContainer);
+          todoDiv.appendChild(getTodoDiv(todoArray[i], project));
         }
       }
     };
 
-    const addTodoUi = (project) => {
+    const getNoTodoDiv = () => {
+      const noTodo = document.createElement("p");
+      noTodo.textContent = "No Todo";
+      noTodo.id = "noTodo";
+      noTodo.className = "text-gray-500";
+
+      return noTodo;
+    };
+    const getTodoDiv = (todoObj, project) => {
+      const todoContainer = document.createElement("div");
+      todoContainer.className = "border rounded-md p-4 bg-white";
+
+      const row1 = document.createElement("div");
+      row1.className = "flex justify-between gap-2 items-center";
+
+      const checkBox = document.createElement("div");
+      checkBox.id = "checkbox";
+      checkBox.className =
+        "w-4 min-w-[1rem] h-4 select-none bg-gray-100 border  rounded hover:bg-gray-200 transition cursor-pointer flex items-center justify-center";
+
+      if (todoObj.priority === -1) {
+        checkBox.classList.add("shadow-center-green");
+      } else if (todoObj.priority === 1) {
+        checkBox.classList.add("shadow-center-red");
+      } else {
+        checkBox.classList.add("shadow-center-gray");
+      }
+
+      const checkBoxNoneActiveClasses = [
+        "bg-gray-100",
+        "border-gray-200",
+        "hover:bg-gray-200",
+      ];
+      const checkBoxActiveClasses = [
+        "bg-spl-blue",
+        "border-[#0549C7]",
+        "hover:bg-spl-blue/90",
+      ];
+
+      checkBox.addEventListener("click", () => {
+        if (checkBox.innerHTML) {
+          checkBoxNoneActive();
+          editTodo(
+            project,
+            todoObj.id,
+            todoObj.title,
+            todoObj.description,
+            todoObj.dueDate,
+            todoObj.priority,
+            false
+          );
+        } else {
+          checkBoxActive();
+          editTodo(
+            project,
+            todoObj.id,
+            todoObj.title,
+            todoObj.description,
+            todoObj.dueDate,
+            todoObj.priority,
+            true
+          );
+        }
+      });
+
+      const title = document.createElement("p");
+      title.textContent = todoObj.title;
+      title.className = "font-bold flex-grow line-clamp-2";
+
+      // Placed here to let title initialize -->
+      const checkBoxNoneActive = () => {
+        checkBoxActiveClasses.forEach((element) => {
+          checkBox.classList.remove(element);
+        });
+        checkBoxNoneActiveClasses.forEach((element) => {
+          checkBox.classList.add(element);
+        });
+        checkBox.innerHTML = "";
+
+        title.classList.remove("line-through");
+      };
+
+      const checkBoxActive = () => {
+        checkBoxNoneActiveClasses.forEach((element) => {
+          checkBox.classList.remove(element);
+        });
+        checkBoxActiveClasses.forEach((element) => {
+          checkBox.classList.add(element);
+        });
+        checkBox.innerHTML = `<svg id="checkbox" class="h-4 w-4" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="checkbox" d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+        title.classList.add("line-through");
+      };
+
+      if (todoObj.isDone) {
+        checkBoxActive();
+      } else {
+        checkBoxNoneActive();
+      }
+      // <--
+
+      const dueDate = document.createElement("p");
+      dueDate.textContent = todoObj.dueDate;
+      dueDate.className = "min-w-fit text-gray-400";
+
+      row1.append(checkBox, title, dueDate);
+      todoContainer.appendChild(row1);
+
+      const description = document.createElement("p");
+      if (todoObj.description) {
+        description.textContent = todoObj.description;
+        description.className = "text-sm text-gray-600 mt-2 line-clamp-2";
+        todoContainer.appendChild(description);
+      }
+
+      const row3 = document.createElement("div");
+      row3.className =
+        "flex justify-center gap-8 h-0 overflow-hidden transition-all";
+
+      const btnClasses =
+        "text-white font-bold px-8 py-2 rounded-lg hover:shadow-lg w-fit transition";
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.className = btnClasses;
+      editBtn.classList.add("bg-spl-blue");
+      editBtn.classList.add("hover:shadow-spl-blue/30");
+
+      editBtn.addEventListener("click", () => {
+        // do something
+      });
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.className = btnClasses;
+      deleteBtn.classList.add("bg-red-500");
+      deleteBtn.classList.add("hover:shadow-red-500/30");
+
+      deleteBtn.addEventListener("click", () => {
+        deleteTodo(project, todoObj.id);
+        todoContainer.remove();
+
+        const todoDiv = document.getElementById("todoDiv");
+        if (!todoDiv.hasChildNodes()) {
+          todoDiv.className = noTodoContainerClasses;
+          todoDiv.appendChild(getNoTodoDiv());
+        }
+      });
+
+      row3.append(editBtn, deleteBtn);
+      todoContainer.appendChild(row3);
+
+      todoContainer.addEventListener("click", (e) => {
+        if (e.target.id !== "checkbox") {
+          row3.classList.remove("h-0");
+          row3.classList.remove("overflow-hidden");
+          row3.classList.add("h-10");
+
+          if (description.textContent) {
+            row3.classList.add("mt-4");
+          }
+
+          description.classList.remove("line-clamp-2");
+
+          document.addEventListener("click", function (e) {
+            if (
+              !todoContainer.contains(e.target) &&
+              e.target.id !== "checkbox"
+            ) {
+              row3.classList.add("h-0");
+              row3.classList.add("overflow-hidden");
+              row3.classList.remove("h-10");
+              row3.classList.remove("mt-4");
+
+              description.classList.add("line-clamp-2");
+            }
+          });
+        }
+      });
+
+      return todoContainer;
+    };
+
+    const addTodoUi = (project, todoDiv) => {
       const errorClass = "border-red-500";
       const container = document.createElement("div");
       container.className = "flex flex-col w-full transition-all static";
@@ -1026,11 +1047,23 @@ export default class ui {
             priority.value
           );
 
+          changeTodo(getTodoData()[project].slice(-1)[0], project, todoDiv);
+
           resetInputs();
         }
       });
 
       return container;
+    };
+
+    const changeTodo = (todoObj, project, todoDiv) => {
+      if (todoDiv.querySelector("#noTodo")) {
+        todoDiv.innerHTML = "";
+        todoDiv.className = withTodoContainerClasses;
+        todoDiv.appendChild(getTodoDiv(todoObj, project));
+      } else {
+        todoDiv.appendChild(getTodoDiv(todoObj, project));
+      }
     };
 
     topBarUi();
