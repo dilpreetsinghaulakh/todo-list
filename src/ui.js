@@ -705,6 +705,14 @@ export default class ui {
           checkBox.className =
             "w-4 min-w-[1rem] h-4 select-none bg-gray-100 border  rounded hover:bg-gray-200 transition cursor-pointer flex items-center justify-center";
 
+          if (todoArray[i].priority === -1) {
+            checkBox.classList.add("shadow-center-green");
+          } else if (todoArray[i].priority === 1) {
+            checkBox.classList.add("shadow-center-red");
+          } else {
+            checkBox.classList.add("shadow-center-gray");
+          }
+
           const checkBoxNoneActiveClasses = [
             "bg-gray-100",
             "border-gray-200",
@@ -716,21 +724,8 @@ export default class ui {
             "hover:bg-spl-blue/90",
           ];
 
-          todoContainer.addEventListener("click", () => {
-            console.log(
-              todoArray[i].project,
-              todoArray[i].id,
-              todoArray[i].title,
-              todoArray[i].description,
-              todoArray[i].dueDate,
-              todoArray[i].priority,
-              todoArray[i].isDone
-            );
-          });
-
           checkBox.addEventListener("click", () => {
             if (checkBox.innerHTML) {
-              console.log("true")
               checkBoxNoneActive();
               editTodo(
                 project,
@@ -742,8 +737,6 @@ export default class ui {
                 false
               );
             } else {
-              console.log("false")
-
               checkBoxActive();
               editTodo(
                 project,
@@ -756,8 +749,6 @@ export default class ui {
               );
             }
           });
-
-          // const check = document.createElement;
 
           const title = document.createElement("p");
           title.textContent = todoArray[i].title;
