@@ -7,18 +7,17 @@ export default function editTodo(
   newPriority,
   newIsDone
 ) {
-  const todoData = JSON.parse(localStorage.getItem("todo"));
+  var todoData = JSON.parse(localStorage.getItem("todo"));
 
-  const todo =
-    todoData[projectName][
-      todoData[projectName].findIndex((item) => (item.id = todoId))
-    ];
-
-  todo.title = newTitle;
-  todo.description = newDescription;
-  todo.dueDate = newDueDate;
-  todo.priority = parseInt(newPriority);
-  todo.isDone = newIsDone;
+  todoData[projectName].map((obj) => {
+    if (obj.id === todoId) {
+      obj.title = newTitle;
+      obj.description = newDescription;
+      obj.dueDate = newDueDate;
+      obj.priority = newPriority;
+      obj.isDone = newIsDone;
+    }
+  });
 
   localStorage.setItem("todo", JSON.stringify(todoData));
 }
