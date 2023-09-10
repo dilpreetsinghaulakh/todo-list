@@ -1335,7 +1335,7 @@ export default class ui {
         ["priority", "title"],
         ["desc", "asc"]
       );
-      getViewUi(sorted, "Past");
+      getViewUi(sorted, "This Week");
     };
 
     const getViewUi = (array, name) => {
