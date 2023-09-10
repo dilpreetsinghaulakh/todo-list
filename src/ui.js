@@ -20,70 +20,9 @@ const textStyleClasses =
   "flex-grow overflow-hidden whitespace-nowrap text-ellipsis";
 
 export default class ui {
-  // static printTodo() {
-  //   const todoData = getTodoData();
-  //   const content = document.getElementById("content");
-  //   content.innerHTML = "";
-  //   Object.keys(todoData).forEach((element) => {
-  //     const projectNameP = document.createElement("p");
-  //     projectNameP.textContent = element;
-  //     projectNameP.className = "bg-blue-400";
-  //     content.append(projectNameP);
-  //     if (todoData[element] !== undefined) {
-  //       const sortedArray = _.sortBy(todoData[element], ["dueDate"]);
-  //       // ...arr.reverse()
-  //       sortedArray.forEach((e) => {
-  //         const title = document.createElement("p");
-  //         const description = document.createElement("p");
-  //         const dueDate = document.createElement("p");
-  //         const priority = document.createElement("p");
-  //         title.textContent = e.title;
-  //         description.textContent = e.description;
-  //         dueDate.textContent = e.dueDate;
-  //         priority.textContent = e.priority;
-
-  //         const deleteBtn = document.createElement("button");
-  //         deleteBtn.textContent = "Delete";
-  //         deleteBtn.className = "bg-red-400";
-  //         deleteBtn.addEventListener("click", () => {
-  //           deleteTodo(element, e.id);
-  //           ui.printTodo();
-  //         });
-  //         content.append(title, description, dueDate, priority, deleteBtn);
-  //       });
-  //     }
-  //   });
-  // }
-
-  static navbar(pageTitleName) {
-    const navbarDiv = document.getElementById("navbar");
-
-    navbarDiv.className = "flex items-center py-6 px-4";
-    const menuIconDiv = document.createElement("div");
-    menuIconDiv.innerHTML += `<svg width="40" height="40" viewBox="0 0 40 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <rect x="3" y="11" width="34" height="5" rx="2.5" />
-    <rect x="3" y="24" width="34" height="5" rx="2.5" />
-    </svg>
-    `;
-    menuIconDiv.className = "h-8 absolute";
-    menuIconDiv.addEventListener("click", () => {
-      const content = document.getElementById("content");
-
-      content.classList.add("content-side");
-
-      const body = document.body;
-      body.className = "bg-backbody";
-    });
-
-    const pageTitle = document.createElement("h1");
-    pageTitle.textContent = pageTitleName;
-    pageTitle.className = "flex-grow text-center text-2xl font-bold";
-    navbarDiv.append(menuIconDiv, pageTitle);
-  }
-
   static desktopUi() {
     const topBarUi = () => {
-      const topbar = document.getElementById("topbar");
+      const topBar = document.getElementById("topBar");
       const appIcon = document.createElement("div");
       appIcon.innerHTML += `<svg class="h-12 w-12" width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
       <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -188,8 +127,8 @@ export default class ui {
         // do something
       });
 
-      topbar.append(appIcon, settingsIcon);
-      topbar.className =
+      topBar.append(appIcon, settingsIcon);
+      topBar.className =
         "flex px-4 py-6 justify-between items-center select-none";
     };
 
@@ -402,9 +341,6 @@ export default class ui {
         "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-8 flex flex-col w-screen max-w-lg";
       form.id = "form";
 
-      // const closeBtn = document.createElement("button")
-      // closeBtn.innerHTML += ``
-
       const oldEmoji = this.getProjectNameEmoji(name);
       const oldName = this.getProjectNameOnly(name);
 
@@ -501,6 +437,7 @@ export default class ui {
         if (inputError.classList.contains("h-0")) {
           renameProject(name, newEmojiValue + newNameValue);
           updateSidebarProjects();
+          openProject(newEmojiValue + newNameValue);
           deactivateBackdrop();
         }
       });
@@ -526,6 +463,7 @@ export default class ui {
       deleteBtn.textContent = "Delete it";
       deleteBtn.addEventListener("click", () => {
         deleteProject(name);
+        this.homeView();
         updateSidebarProjects();
         deactivateBackdrop();
       });
