@@ -142,7 +142,7 @@ export default class ui {
         {
           name: "Home",
           view: function () {
-            ui.homeView();
+            homeView();
           },
           svg: `<svg class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="Navigation / House_01"><path id="Vector" d="M20 17.0002V11.4522C20 10.9179 19.9995 10.6506 19.9346 10.4019C19.877 10.1816 19.7825 9.97307 19.6546 9.78464C19.5102 9.57201 19.3096 9.39569 18.9074 9.04383L14.1074 4.84383C13.3608 4.19054 12.9875 3.86406 12.5674 3.73982C12.1972 3.63035 11.8026 3.63035 11.4324 3.73982C11.0126 3.86397 10.6398 4.19014 9.89436 4.84244L5.09277 9.04383C4.69064 9.39569 4.49004 9.57201 4.3457 9.78464C4.21779 9.97307 4.12255 10.1816 4.06497 10.4019C4 10.6506 4 10.9179 4 11.4522V17.0002C4 17.932 4 18.3978 4.15224 18.7654C4.35523 19.2554 4.74432 19.6452 5.23438 19.8482C5.60192 20.0005 6.06786 20.0005 6.99974 20.0005C7.93163 20.0005 8.39808 20.0005 8.76562 19.8482C9.25568 19.6452 9.64467 19.2555 9.84766 18.7654C9.9999 18.3979 10 17.932 10 17.0001V16.0001C10 14.8955 10.8954 14.0001 12 14.0001C13.1046 14.0001 14 14.8955 14 16.0001V17.0001C14 17.932 14 18.3979 14.1522 18.7654C14.3552 19.2555 14.7443 19.6452 15.2344 19.8482C15.6019 20.0005 16.0679 20.0005 16.9997 20.0005C17.9316 20.0005 18.3981 20.0005 18.7656 19.8482C19.2557 19.6452 19.6447 19.2554 19.8477 18.7654C19.9999 18.3978 20 17.932 20 17.0002Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`,
         },
@@ -463,7 +463,7 @@ export default class ui {
       deleteBtn.textContent = "Delete it";
       deleteBtn.addEventListener("click", () => {
         deleteProject(name);
-        this.homeView();
+        homeView();
         updateSidebarProjects();
         deactivateBackdrop();
       });
@@ -1211,89 +1211,139 @@ export default class ui {
       }
     };
 
+    const homeView = () => {
+      const todoData = getTodoData();
+      const content = document.getElementById("content");
+      content.className =
+        "flex flex-col w-full h-full mr-4 gap-4 overflow-x-visible transition";
+
+      const yourProjects = document.createElement("h1");
+      yourProjects.textContent = `Your Projects (${
+        Object.keys(todoData).length
+      })`;
+      yourProjects.className = "text-5xl font-thin";
+
+      const sortedArray = this.getProjectNamesSorted();
+
+      const projectsContainer = document.createElement("div");
+      projectsContainer.className = "w-full overflow-x-scroll flex-shrink-0";
+
+      const projects = document.createElement("div");
+      projects.className = "flex gap-2";
+
+      for (let i = 0; i < sortedArray.length; i++) {
+        const project = document.createElement("div");
+        project.className =
+          "flex gap-2 items-center whitespace-nowrap bg-gray-100 focus:bg-gray-200 hover:bg-gray-200 transition text-black font-medium text-sm border-black py-2 px-5 rounded-xl cursor-pointer select-none";
+
+        const projectName = document.createElement("p");
+        projectName.textContent = this.getProjectNameOnly(sortedArray[i]);
+        projectName.className = "w-max";
+
+        project.append(projectName);
+        project.addEventListener("click", () => {
+          openProject(sortedArray[i]);
+        });
+        projects.appendChild(project);
+      }
+
+      projectsContainer.appendChild(projects);
+
+      this.getTodoOnly();
+
+      const innerContent = document.createElement("div");
+      innerContent.className = "flex-grow flex";
+
+      const todoOnly = this.getTodoOnly();
+
+      if (!todoOnly.length) {
+        const noTodo = document.createElement("div");
+        noTodo.className =
+          "flex flex-col items-center justify-center flex-grow gap-12 text-gray-500";
+
+        const noTodoP = document.createElement("p");
+        noTodoP.textContent =
+          "You don't have any todo, add one by going into a project.";
+
+        const arrow = document.createElement("div");
+        arrow.innerHTML = `<svg class="h-full w-full" width="435" height="90" viewBox="0 0 435 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M431 10.5926C406.574 30.115 387.281 38.379 355.944 36.9914C327.646 35.7383 296.863 22.3483 270.544 12.5909C237.957 0.510424 173.992 -8.93118 155.057 29.524C140.355 59.3834 162.392 95.0893 197.071 85.3717C210.441 81.6253 217.35 63.8425 211.428 51.5055C205.032 38.1805 185.91 31.7568 172.686 28.6826C137.171 20.4264 113.511 53.572 81.374 59.3935C51.3497 64.8323 29.0541 51.4325 6.31842 33.3103C4.37095 31.758 5.36837 42.086 5.36837 44.6691C5.36837 54.1386 3.46812 49.9358 3.46812 42.776C3.46812 38.1712 1.03353 28.3808 7.26849 30.9964C11.7668 32.8834 21.2221 33.3103 26.2699 33.3103" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>`;
+        arrow.className = "w-[50vw] h-auto";
+
+        noTodo.append(noTodoP, arrow);
+
+        innerContent.appendChild(noTodo);
+      } else {
+        innerContent.className =
+          "flex-grow flex flex-col gap-4 border rounded-md bg-gray-50 w-full p-2 overflow-y-scroll";
+        let sorted = _.sortBy(todoOnly, ["dueDate", "priority", "title"]);
+
+        sorted.forEach((element) => {
+          const row1 = document.createElement("div");
+          row1.className = "flex gap-2 items-center";
+
+          const priority = document.createElement("div");
+          priority.className = "h-4 w-4 rounded-full";
+
+          switch (parseInt(element.priority)) {
+            case -1:
+              priority.classList.add("bg-green-500");
+              break;
+            case 0:
+              priority.classList.add("bg-gray-500");
+              break;
+            case 1:
+              priority.classList.add("bg-red-500");
+              priority.classList.add("animate-pulse");
+              break;
+          }
+
+          const todo = document.createElement("div");
+          todo.className = "p-4 bg-white border rounded-md transition-all";
+
+          const title = document.createElement("p");
+          title.textContent = element.title;
+          title.className = "font-bold flex-grow";
+
+          const dueDate = document.createElement("p");
+          dueDate.textContent = element.dueDate;
+          dueDate.className = "text-gray-400";
+
+          row1.append(priority, title, dueDate);
+          todo.appendChild(row1);
+
+          if (element.description) {
+            const description = document.createElement("p");
+            description.innerHTML = element.description.replace(/\n/g, "<br>");
+            description.className = "text-sm text-gray-600 mt-2 line-clamp-2";
+
+            todo.addEventListener("click", () => {
+              description.classList.remove("line-clamp-2");
+
+              window.addEventListener("click", (e) => {
+                if (!todo.contains(e.target)) {
+                  description.classList.add("line-clamp-2");
+                }
+              });
+            });
+
+            todo.appendChild(description);
+          }
+
+          const project = document.createElement("p");
+          project.textContent = this.getProjectNameOnly(element.project);
+          project.className = "text-gray-400 text-sm text-right";
+
+          todo.appendChild(project);
+          innerContent.appendChild(todo);
+        });
+      }
+      this.changeContent(yourProjects, projectsContainer, innerContent);
+    };
+
     topBarUi();
     sideBar();
     addBackdrop();
-  }
-
-  static homeView() {
-    const todoData = getTodoData();
-    const content = document.getElementById("content");
-    content.className =
-      "flex flex-col w-full h-full mr-4 gap-4 overflow-x-visible transition";
-
-    const yourProjects = document.createElement("h1");
-    yourProjects.textContent = `Your Projects (${
-      Object.keys(todoData).length
-    })`;
-    yourProjects.className = "text-5xl font-thin";
-
-    const sortedArray = this.getProjectNamesSorted();
-
-    const projectsContainer = document.createElement("div");
-    projectsContainer.className = "w-full overflow-x-scroll";
-
-    const projects = document.createElement("div");
-    projects.className = "flex gap-2";
-
-    for (let i = 0; i < sortedArray.length; i++) {
-      const project = document.createElement("div");
-      project.className =
-        "flex gap-2 items-center whitespace-nowrap bg-gray-100 focus:bg-gray-200 hover:bg-gray-200 transition text-black font-medium text-sm border-black py-2 px-5 rounded-xl cursor-pointer select-none";
-
-      const emoji = document.createElement("p");
-      emoji.textContent = this.getProjectNameEmoji(sortedArray[i]);
-      emoji.className = circleBgIconStyleClasses;
-      emoji.classList.add("bg-white");
-
-      const projectName = document.createElement("p");
-      projectName.textContent = this.getProjectNameOnly(sortedArray[i]);
-      projectName.className = "w-max";
-
-      project.append(projectName);
-      project.addEventListener("click", () => {
-        // do something
-      });
-      projects.appendChild(project);
-    }
-
-    projectsContainer.appendChild(projects);
-
-    this.getTodoOnly();
-
-    const innerContent = document.createElement("div");
-    innerContent.className = "flex-grow flex";
-
-    const todoOnly = this.getTodoOnly();
-
-    if (!todoOnly.length) {
-      const noTodo = document.createElement("div");
-      noTodo.className =
-        "flex flex-col items-center justify-center flex-grow gap-12 text-gray-500";
-
-      const noTodoP = document.createElement("p");
-      noTodoP.textContent =
-        "You don't have any todo, add one by going into a project.";
-
-      const arrow = document.createElement("div");
-      arrow.innerHTML = `<svg class="h-full w-full" width="435" height="90" viewBox="0 0 435 90" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M431 10.5926C406.574 30.115 387.281 38.379 355.944 36.9914C327.646 35.7383 296.863 22.3483 270.544 12.5909C237.957 0.510424 173.992 -8.93118 155.057 29.524C140.355 59.3834 162.392 95.0893 197.071 85.3717C210.441 81.6253 217.35 63.8425 211.428 51.5055C205.032 38.1805 185.91 31.7568 172.686 28.6826C137.171 20.4264 113.511 53.572 81.374 59.3935C51.3497 64.8323 29.0541 51.4325 6.31842 33.3103C4.37095 31.758 5.36837 42.086 5.36837 44.6691C5.36837 54.1386 3.46812 49.9358 3.46812 42.776C3.46812 38.1712 1.03353 28.3808 7.26849 30.9964C11.7668 32.8834 21.2221 33.3103 26.2699 33.3103" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>`;
-      arrow.className = "w-[50vw] h-auto";
-
-      noTodo.append(noTodoP, arrow);
-
-      innerContent.appendChild(noTodo);
-    } else {
-      // Not ready
-      // const todayDate = new Date().toISOString().slice(0, 10);
-      let sorted = _.sortBy(todoOnly, ["dueDate", "priority", "title"]);
-
-      sorted.forEach((element) => {
-        let p = document.createElement("p");
-        p.textContent = element["title"] + " " + element["priority"] + " ";
-        innerContent.append(p);
-      });
-    }
-    this.changeContent(yourProjects, projectsContainer, innerContent);
+    homeView();
   }
 
   static changeContent(...args) {
@@ -1411,6 +1461,5 @@ export default class ui {
 
   static initialInsertions() {
     this.desktopUi();
-    this.homeView();
   }
 }
