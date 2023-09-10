@@ -149,7 +149,7 @@ export default class ui {
         {
           name: "Today",
           view: function () {
-            console.log("to be made...");
+            todayView();
           },
           svg: `<svg class="w-6 h-6" width="24" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 8H20M4 8V16.8002C4 17.9203 4 18.4801 4.21799 18.9079C4.40973 19.2842 4.71547 19.5905 5.0918 19.7822C5.5192 20 6.07899 20 7.19691 20H16.8031C17.921 20 18.48 20 18.9074 19.7822C19.2837 19.5905 19.5905 19.2842 19.7822 18.9079C20 18.4805 20 17.9215 20 16.8036V8M4 8V7.2002C4 6.08009 4 5.51962 4.21799 5.0918C4.40973 4.71547 4.71547 4.40973 5.0918 4.21799C5.51962 4 6.08009 4 7.2002 4H8M20 8V7.19691C20 6.07899 20 5.5192 19.7822 5.0918C19.5905 4.71547 19.2837 4.40973 18.9074 4.21799C18.4796 4 17.9203 4 16.8002 4H16M16 2V4M16 4H8M8 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text font-family="-apple-system, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'SF Pro Rounded'" font-size="9" transform="translate(4 2)"  font-weight="900" fill="currentColor"><tspan x="8" y="15" text-anchor="middle" id="todayDate">${day}</tspan></text></svg>`,
         },
@@ -1275,77 +1275,123 @@ export default class ui {
       } else {
         innerContent.className =
           "flex-grow flex flex-col gap-4 border rounded-md bg-gray-50 w-full p-2 overflow-y-scroll";
-        let sorted = _.filter(
-          _.sortBy(todoOnly, ["dueDate", "priority", "title"]),
-          (element) => {
+        let sorted = _.orderBy(
+          _.filter(todoOnly, (element) => {
             return !element.isDone;
-          }
+          }),
+          ["dueDate", "priority", "title"],
+          ["asc", "desc", "asc"]
         );
 
         sorted.forEach((element) => {
-          const row1 = document.createElement("div");
-          row1.className = "flex gap-2 items-center";
-
-          const priority = document.createElement("div");
-          priority.className = "h-4 w-4 rounded-full";
-
-          switch (parseInt(element.priority)) {
-            case -1:
-              priority.classList.add("bg-green-500");
-              break;
-            case 0:
-              priority.classList.add("bg-gray-500");
-              break;
-            case 1:
-              priority.classList.add("bg-red-500");
-              priority.classList.add("animate-pulse");
-              break;
-          }
-
-          const todo = document.createElement("div");
-          todo.className = "p-4 bg-white border rounded-md transition-all";
-
-          const title = document.createElement("p");
-          title.textContent = element.title;
-          title.className = "font-bold flex-grow";
-
-          const rightContainer = document.createElement("div");
-
-          const dueDate = document.createElement("p");
-          dueDate.textContent = element.dueDate;
-          dueDate.className = "text-gray-400 text-sm";
-
-          const project = document.createElement("p");
-          project.textContent = this.getProjectNameOnly(element.project);
-          project.className = "text-gray-400 text-sm text-right";
-
-          rightContainer.append(dueDate, project);
-
-          row1.append(priority, title, rightContainer);
-          todo.appendChild(row1);
-
-          if (element.description) {
-            const description = document.createElement("p");
-            description.innerHTML = element.description.replace(/\n/g, "<br>");
-            description.className = "text-sm text-gray-600 mt-2 line-clamp-2";
-
-            todo.addEventListener("click", () => {
-              description.classList.remove("line-clamp-2");
-
-              window.addEventListener("click", (e) => {
-                if (!todo.contains(e.target)) {
-                  description.classList.add("line-clamp-2");
-                }
-              });
-            });
-
-            todo.appendChild(description);
-          }
-
-          innerContent.appendChild(todo);
+          innerContent.appendChild(getViewTodoDiv(element));
         });
       }
       this.changeContent(yourProjects, projectsContainer, innerContent);
+    };
+
+    const todayView = () => {
+      const todoOnly = this.getTodoOnly();
+
+      let sorted = _.orderBy(
+        _.filter(todoOnly, (element) => {
+          return element.dueDate === new Date().toJSON().slice(0, 10);
+        }),
+        ["priority", "title"],
+        ["desc", "asc"]
+      );
+
+      const heading = document.createElement("p");
+      heading.textContent = `Today (${sorted.length})`;
+      heading.className = "text-5xl font-thin";
+
+      const todoContainer = document.createElement("div");
+      todoContainer.className =
+        "flex-grow border bg-gray-50 rounded-md p-2 flex flex-col gap-4";
+
+      if (sorted.length) {
+        sorted.forEach((element) => {
+          todoContainer.appendChild(getViewTodoDiv(element));
+        });
+      } else {
+        nothingViewTodo(todoContainer);
+      }
+
+      this.changeContent(heading, todoContainer);
+    };
+
+    const nothingViewTodo = (todoContainer) => {
+      todoContainer.classList.add("items-center");
+      todoContainer.classList.add("justify-center");
+
+      const nothing = document.createElement("p");
+      nothing.textContent = "Nothing here";
+      nothing.className = "font-semibold text-gray-500";
+
+      todoContainer.appendChild(nothing);
+    };
+
+    const getViewTodoDiv = (element) => {
+      const row1 = document.createElement("div");
+      row1.className = "flex gap-2 items-center";
+
+      const priority = document.createElement("div");
+      priority.className = "h-4 w-4 rounded-full";
+
+      switch (parseInt(element.priority)) {
+        case -1:
+          priority.classList.add("bg-green-500");
+          break;
+        case 0:
+          priority.classList.add("bg-gray-500");
+          break;
+        case 1:
+          priority.classList.add("bg-red-500");
+          priority.classList.add("animate-pulse");
+          break;
+      }
+
+      const todo = document.createElement("div");
+      todo.className = "p-4 bg-white border rounded-md transition-all";
+
+      const title = document.createElement("p");
+      title.textContent = element.title;
+      title.className = "font-bold flex-grow";
+
+      const rightContainer = document.createElement("div");
+
+      const dueDate = document.createElement("p");
+      dueDate.textContent = element.dueDate;
+      dueDate.className = "text-gray-400 text-sm";
+
+      const project = document.createElement("p");
+      project.textContent = this.getProjectNameOnly(element.project);
+      project.className = "text-gray-400 text-sm text-right";
+
+      rightContainer.append(dueDate, project);
+
+      row1.append(priority, title, rightContainer);
+      todo.appendChild(row1);
+
+      if (element.description) {
+        const description = document.createElement("p");
+        description.innerHTML = element.description.replace(/\n/g, "<br>");
+        description.className = "text-sm text-gray-600 mt-2 line-clamp-2";
+
+        todo.addEventListener("click", () => {
+          description.classList.remove("line-clamp-2");
+
+          window.addEventListener("click", (e) => {
+            if (!todo.contains(e.target)) {
+              description.classList.add("line-clamp-2");
+            }
+          });
+        });
+
+        todo.appendChild(description);
+      }
+
+      return todo;
     };
 
     topBarUi();
