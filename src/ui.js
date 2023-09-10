@@ -719,12 +719,16 @@ export default class ui {
       checkBox.className =
         "w-4 min-w-[1rem] h-4 select-none bg-gray-100 border  rounded hover:bg-gray-200 transition cursor-pointer flex items-center justify-center";
 
-      if (todoObj.priority === -1) {
-        checkBox.classList.add("shadow-center-green");
-      } else if (todoObj.priority === 1) {
-        checkBox.classList.add("shadow-center-red");
-      } else {
-        checkBox.classList.add("shadow-center-gray");
+      switch (parseInt(todoObj.priority)) {
+        case -1:
+          checkBox.classList.add("shadow-center-green");
+          break;
+        case 0:
+          checkBox.classList.add("shadow-center-gray");
+          break;
+        case 1:
+          checkBox.classList.add("shadow-center-red");
+          break;
       }
 
       const checkBoxNoneActiveClasses = [
@@ -917,7 +921,7 @@ export default class ui {
           high.textContent = "High";
           high.value = 1;
 
-          switch (todoObj.priority) {
+          switch (parseInt(todoObj.priority)) {
             case -1:
               low.defaultSelected = true;
               break;
@@ -928,11 +932,9 @@ export default class ui {
               high.defaultSelected = true;
               break;
           }
-          changePriorityUi(todoObj.priority);
+          changePriorityUi(parseInt(todoObj.priority));
 
           priority.append(low, normal, high);
-          // const btnClasses =
-          //   "bg-spl-blue border border-[#0549C7] hover:bg-spl-blue/95 aspect-square w-10 h-10 flex items-center justify-center";
 
           row1.append(title, dueDate, priority);
 
@@ -987,7 +989,7 @@ export default class ui {
               });
 
               closeOverlay();
-              
+
               printTodo(todoDiv, getTodoData()[project], project);
             }
           });
