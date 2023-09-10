@@ -1283,9 +1283,13 @@ export default class ui {
           ["asc", "desc", "asc"]
         );
 
-        sorted.forEach((element) => {
-          innerContent.appendChild(getViewTodoDiv(element));
-        });
+        if (sorted.length) {
+          sorted.forEach((element) => {
+            innerContent.appendChild(getViewTodoDiv(element));
+          });
+        } else {
+          nothingViewTodo(innerContent);
+        }
       }
       this.changeContent(yourProjects, projectsContainer, innerContent);
     };
@@ -1294,7 +1298,10 @@ export default class ui {
       const todoOnly = this.getTodoOnly();
       let sorted = _.orderBy(
         _.filter(todoOnly, (element) => {
-          return element.dueDate === new Date().toJSON().slice(0, 10);
+          return (
+            element.dueDate === new Date().toJSON().slice(0, 10) &&
+            !element.isDone
+          );
         }),
         ["priority", "title"],
         ["desc", "asc"]
@@ -1306,7 +1313,10 @@ export default class ui {
       const todoOnly = this.getTodoOnly();
       let sorted = _.orderBy(
         _.filter(todoOnly, (element) => {
-          return element.dueDate < new Date().toJSON().slice(0, 10);
+          return (
+            element.dueDate < new Date().toJSON().slice(0, 10) &&
+            !element.isDone
+          );
         }),
         ["priority", "title"],
         ["desc", "asc"]
@@ -1332,7 +1342,9 @@ export default class ui {
         _.filter(todoOnly, (element) => {
           return (
             new Date(element.dueDate).getWeek() === new Date().getWeek() &&
-            new Date(element.dueDate).getFullYear() === new Date().getFullYear()
+            new Date(element.dueDate).getFullYear() ===
+              new Date().getFullYear() &&
+            !element.isDone
           );
         }),
         ["priority", "title"],
@@ -1347,7 +1359,9 @@ export default class ui {
         _.filter(todoOnly, (element) => {
           return (
             new Date(element.dueDate).getMonth() === new Date().getMonth() &&
-            new Date(element.dueDate).getFullYear() === new Date().getFullYear()
+            new Date(element.dueDate).getFullYear() ===
+              new Date().getFullYear() &&
+            !element.isDone
           );
         }),
         ["priority", "title"],
