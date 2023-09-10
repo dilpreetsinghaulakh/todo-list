@@ -828,7 +828,155 @@ export default class ui {
       editBtn.classList.add("hover:shadow-spl-blue/30");
 
       editBtn.addEventListener("click", () => {
-        // do something
+        const setDimensions = () => {
+          overlay.style.width = todoDiv.offsetWidth + "px";
+          overlay.style.height = todoDiv.offsetHeight + "px";
+          overlay.style.top = todoDiv.offsetTop + "px";
+          overlay.style.left = todoDiv.offsetLeft + "px";
+        };
+
+        const renameForm = () => {
+          const errorClass = "border-red-500";
+          const container = document.createElement("div");
+          container.className = "flex flex-col gap-4 w-full max-w-5xl";
+
+          const row1 = document.createElement("div");
+          row1.className = "flex gap-4 h-10 w-full";
+
+          const title = document.createElement("input");
+          title.placeholder = "Title";
+          title.value = todoObj.title;
+          title.className =
+            "flex-grow border rounded-md outline-none focus:border-spl-blue px-1";
+          title.addEventListener("change", () => {
+            title.classList.remove(errorClass);
+          });
+
+          const dueDate = document.createElement("input");
+          dueDate.type = "date";
+          dueDate.value = todoObj.dueDate;
+          dueDate.className =
+            "border rounded-md px-4 focus:border-spl-blue focus:outline-none cursor-pointer";
+          dueDate.addEventListener("change", () => {
+            dueDate.classList.remove(errorClass);
+          });
+
+          const priority = document.createElement("select");
+          priority.className =
+            "appearance-none px-4 bg-gray-100 rounded-md outline-none border focus:border-spl-blue cursor-pointer";
+
+          const changePriorityUi = (priorityValue) => {
+            switch (priorityValue) {
+              case -1:
+                priority.classList.add("bg-green-100");
+                break;
+              case 0:
+                priority.classList.add("bg-gray-100");
+                break;
+              case 1:
+                priority.classList.add("bg-red-100");
+                break;
+            }
+          };
+
+          priority.addEventListener("change", () => {
+            var oldBg;
+
+            priority.classList.forEach((e) => {
+              if (e.startsWith("bg")) {
+                oldBg = e;
+              }
+            });
+            priority.classList.remove(oldBg);
+            changePriorityUi(parseInt(priority.value));
+          });
+
+          const low = document.createElement("option");
+          low.textContent = "Low";
+          low.value = -1;
+
+          const normal = document.createElement("option");
+          normal.textContent = "Normal";
+          normal.value = 0;
+
+          const high = document.createElement("option");
+          high.textContent = "High";
+          high.value = 1;
+
+          switch (todoObj.priority) {
+            case -1:
+              low.defaultSelected = true;
+              break;
+            case 0:
+              normal.defaultSelected = true;
+              break;
+            case 1:
+              high.defaultSelected = true;
+              break;
+          }
+          changePriorityUi(todoObj.priority);
+
+          priority.append(low, normal, high);
+          // const btnClasses =
+          //   "bg-spl-blue border border-[#0549C7] hover:bg-spl-blue/95 aspect-square w-10 h-10 flex items-center justify-center";
+
+          row1.append(title, dueDate, priority);
+
+          const description = document.createElement("textarea");
+          description.placeholder = "Description (Optional)";
+          description.value = todoObj.description;
+          description.className =
+            "transition-all outline-none h-32 flex-grow p-1 border focus:border-spl-blue rounded-md resize-none";
+
+          container.append(row1, description);
+
+          overlay.append(container);
+        };
+
+        const todoDiv = document.getElementById("todoDiv");
+
+        todoDiv.classList.remove("overflow-y-scroll");
+        todoDiv.classList.add("overflow-y-hidden");
+
+        description.classList.add("line-clamp-2");
+
+        const overlay = document.createElement("div");
+        overlay.className =
+          "absolute border bg-white/70 opacity-0 rounded-md transition duration-500 flex items-center justify-center p-12";
+        setDimensions();
+
+        window.addEventListener("resize", () => {
+          setDimensions();
+        });
+
+        setTimeout(() => {
+          overlay.classList.remove("opacity-0");
+          overlay.classList.add("backdrop-blur");
+
+          setTimeout(() => {
+            row3.classList.add("h-0");
+            row3.classList.add("overflow-hidden");
+            row3.classList.remove("h-10");
+            row3.classList.remove("mt-4");
+          }, 250);
+
+          document.addEventListener("click", function (e) {
+            if (!overlay.contains(e.target)) {
+              overlay.classList.remove("backdrop-blur");
+              overlay.classList.add("opacity-0");
+
+              setTimeout(() => {
+                overlay.remove();
+                todoDiv.classList.add("overflow-y-scroll");
+                todoDiv.classList.remove("overflow-y-hidden");
+              }, 500);
+            }
+          });
+        }, 1);
+
+        renameForm();
+
+        todoDiv.appendChild(overlay);
       });
 
       const deleteBtn = document.createElement("button");
@@ -1047,7 +1195,7 @@ export default class ui {
             priority.value
           );
 
-          changeTodo(getTodoData()[project].slice(-1)[0], project, todoDiv);
+          newTodoDiv(getTodoData()[project].slice(-1)[0], project, todoDiv);
 
           resetInputs();
         }
@@ -1056,7 +1204,7 @@ export default class ui {
       return container;
     };
 
-    const changeTodo = (todoObj, project, todoDiv) => {
+    const newTodoDiv = (todoObj, project, todoDiv) => {
       if (todoDiv.querySelector("#noTodo")) {
         todoDiv.innerHTML = "";
         todoDiv.className = withTodoContainerClasses;
