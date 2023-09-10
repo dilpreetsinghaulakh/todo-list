@@ -1275,7 +1275,12 @@ export default class ui {
       } else {
         innerContent.className =
           "flex-grow flex flex-col gap-4 border rounded-md bg-gray-50 w-full p-2 overflow-y-scroll";
-        let sorted = _.sortBy(todoOnly, ["dueDate", "priority", "title"]);
+        let sorted = _.filter(
+          _.sortBy(todoOnly, ["dueDate", "priority", "title"]),
+          (element) => {
+            return !element.isDone;
+          }
+        );
 
         sorted.forEach((element) => {
           const row1 = document.createElement("div");
@@ -1304,11 +1309,19 @@ export default class ui {
           title.textContent = element.title;
           title.className = "font-bold flex-grow";
 
+          const rightContainer = document.createElement("div");
+
           const dueDate = document.createElement("p");
           dueDate.textContent = element.dueDate;
-          dueDate.className = "text-gray-400";
+          dueDate.className = "text-gray-400 text-sm";
 
-          row1.append(priority, title, dueDate);
+          const project = document.createElement("p");
+          project.textContent = this.getProjectNameOnly(element.project);
+          project.className = "text-gray-400 text-sm text-right";
+
+          rightContainer.append(dueDate, project);
+
+          row1.append(priority, title, rightContainer);
           todo.appendChild(row1);
 
           if (element.description) {
@@ -1329,11 +1342,6 @@ export default class ui {
             todo.appendChild(description);
           }
 
-          const project = document.createElement("p");
-          project.textContent = this.getProjectNameOnly(element.project);
-          project.className = "text-gray-400 text-sm text-right";
-
-          todo.appendChild(project);
           innerContent.appendChild(todo);
         });
       }
