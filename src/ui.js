@@ -835,6 +835,19 @@ export default class ui {
           overlay.style.left = todoDiv.offsetLeft + "px";
         };
 
+        const closeOverlay = () => {
+          overlay.classList.remove("backdrop-blur");
+          overlay.classList.add("opacity-0");
+
+          setTimeout(() => {
+            overlay.remove();
+            todoDiv.classList.add("overflow-y-scroll");
+            todoDiv.classList.remove("overflow-y-hidden");
+          }, 500);
+        };
+
+        const todoDiv = document.getElementById("todoDiv");
+
         const renameForm = () => {
           const errorClass = "border-red-500";
           const container = document.createElement("div");
@@ -929,12 +942,62 @@ export default class ui {
           description.className =
             "transition-all outline-none flex-grow min-h-[3.5rem] max-h-72 flex-grow p-1 border focus:border-spl-blue rounded-md resize-none";
 
-          container.append(row1, description);
+          const buttonRow = document.createElement("div");
+          buttonRow.className = "flex gap-4";
+
+          const discardBtn = document.createElement("button");
+          discardBtn.textContent = "Discard";
+          discardBtn.className = btnClasses;
+          discardBtn.classList.add("bg-red-500");
+          discardBtn.classList.add("hover:shadow-red-500/30");
+
+          discardBtn.addEventListener("click", () => {
+            closeOverlay();
+          });
+
+          const saveBtn = document.createElement("button");
+          saveBtn.textContent = "Save";
+          saveBtn.className = btnClasses;
+          saveBtn.classList.add("bg-spl-blue");
+          saveBtn.classList.add("hover:shadow-spl-blue/30");
+
+          saveBtn.addEventListener("click", () => {
+            if (!title.value && !dueDate.value) {
+              title.classList.add(errorClass);
+              dueDate.classList.add(errorClass);
+            } else if (!title.value) {
+              title.classList.add(errorClass);
+            } else if (!dueDate.value) {
+              dueDate.classList.add(errorClass);
+            } else {
+              editTodo(
+                project,
+                todoObj.id,
+                title.value,
+                description.value,
+                dueDate.value,
+                priority.value,
+                todoObj.isDone
+              );
+
+              Array.from(todoDiv.children).forEach((element) => {
+                if (element !== overlay) {
+                  element.remove();
+                }
+              });
+
+              closeOverlay();
+              
+              printTodo(todoDiv, getTodoData()[project], project);
+            }
+          });
+
+          buttonRow.append(discardBtn, saveBtn);
+
+          container.append(row1, description, buttonRow);
 
           overlay.append(container);
         };
-
-        const todoDiv = document.getElementById("todoDiv");
 
         todoDiv.classList.remove("overflow-y-scroll");
         todoDiv.classList.add("overflow-y-hidden");
@@ -963,14 +1026,7 @@ export default class ui {
 
           document.addEventListener("click", function (e) {
             if (!overlay.contains(e.target)) {
-              overlay.classList.remove("backdrop-blur");
-              overlay.classList.add("opacity-0");
-
-              setTimeout(() => {
-                overlay.remove();
-                todoDiv.classList.add("overflow-y-scroll");
-                todoDiv.classList.remove("overflow-y-hidden");
-              }, 500);
+              closeOverlay();
             }
           });
         }, 1);
