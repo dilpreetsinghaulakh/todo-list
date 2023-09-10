@@ -809,7 +809,7 @@ export default class ui {
 
       const description = document.createElement("p");
       if (todoObj.description) {
-        description.textContent = todoObj.description;
+        description.innerHTML = todoObj.description.replace(/\n/g, "<br>");
         description.className = "text-sm text-gray-600 mt-2 line-clamp-2";
         todoContainer.appendChild(description);
       }
@@ -838,7 +838,8 @@ export default class ui {
         const renameForm = () => {
           const errorClass = "border-red-500";
           const container = document.createElement("div");
-          container.className = "flex flex-col gap-4 w-full max-w-5xl";
+          container.className =
+            "flex flex-col gap-4 w-full max-w-5xl h-full justify-center";
 
           const row1 = document.createElement("div");
           row1.className = "flex gap-4 h-10 w-full";
@@ -926,7 +927,7 @@ export default class ui {
           description.placeholder = "Description (Optional)";
           description.value = todoObj.description;
           description.className =
-            "transition-all outline-none h-32 flex-grow p-1 border focus:border-spl-blue rounded-md resize-none";
+            "transition-all outline-none flex-grow min-h-[3.5rem] max-h-72 flex-grow p-1 border focus:border-spl-blue rounded-md resize-none";
 
           container.append(row1, description);
 
