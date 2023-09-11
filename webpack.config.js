@@ -42,6 +42,12 @@ module.exports = {
       template: "./src/template.html",
     }),
     new FaviconsWebpackPlugin({
+      appName: "Todo Dump",
+      lang: "en-US",
+      appleStatusBarStyle: "black-translucent",
+      orientation: "landscape",
+      appDescription: 'Pure JavaScript Todo List',
+      developerName: 'Dilpreet Singh',
       logo: "./src/assets/favicon.svg",
       mode: "webapp",
     }),
