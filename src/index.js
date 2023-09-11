@@ -3,7 +3,7 @@ import "./style.css";
 import ui from "./ui";
 
 window.addEventListener("load", () => {
-  if (!Object.keys(JSON.parse(localStorage.getItem("todo"))).length) {
+  if (localStorage.getItem("todo") === null || !Object.keys(JSON.parse(localStorage.getItem("todo"))).length) {
     createProject("😎Default");
   }
   ui.initialInsertions();
