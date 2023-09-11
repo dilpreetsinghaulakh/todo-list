@@ -136,7 +136,7 @@ export default class ui {
           "w-full max-w-5xl h-full border rounded-xl p-4 bg-white flex flex-col gap-4 overflow-y-scroll";
 
         const row1 = document.createElement("div");
-        row1.className = "flex items-center  gap-8";
+        row1.className = "flex items-center ml-8 gap-8";
 
         const appIcon = document.createElement("div");
         appIcon.innerHTML += icon;
@@ -155,10 +155,16 @@ export default class ui {
 
         appName.append(name, tag);
 
+        const closeBtnContainer = document.createElement("div");
+        closeBtnContainer.style.width = "calc(100% - 14rem)";
+        closeBtnContainer.style.maxWidth = "62rem";
+        closeBtnContainer.className =
+          "fixed self-start left-1/2 -translate-x-1/2 flex justify-end";
+
         const closeBtn = document.createElement("button");
         closeBtn.innerHTML += `<svg class="h-full w-full" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M16 16L12 12M12 12L8 8M12 12L16 8M12 12L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
         closeBtn.className =
-          "border border-gray-300 bg-gray-100 hover:bg-gray-200 transition self-start ml-auto h-10 w-10 rounded-md";
+          "border border-gray-300 bg-gray-100 hover:bg-gray-200 transition  ml-auto h-10 w-10 rounded-md";
 
         closeBtn.addEventListener("click", () => {
           overlay.classList.add("opacity-0");
@@ -166,21 +172,21 @@ export default class ui {
             overlay.remove();
           }, 500);
         });
+        closeBtnContainer.appendChild(closeBtn);
 
-        row1.append(appIcon, appName, closeBtn);
+        row1.append(appIcon, appName, closeBtnContainer);
 
         const libraries = document.createElement("div");
-        libraries.className = "flex flex-col gap-4 px-8";
+        libraries.className = "flex flex-col gap-2 px-8";
 
         const libP = document.createElement("p");
         libP.textContent = "Open Source Libraries";
-        libP.className = "text-4xl font-semibold";
+        libP.className = "text-xl font-semibold";
         libraries.appendChild(libP);
 
         const libDes = document.createElement("p");
         libDes.textContent =
-          "These are some of the open source libraries used in this project, there are many more which are not mentioned.";
-        libDes.className = "text-lg text-gray-700";
+          "These are some of the open source libraries used in this project, there may be more which are not mentioned.";
         libraries.appendChild(libDes);
 
         const libArray = [
@@ -192,62 +198,67 @@ export default class ui {
             link: "https://github.com/jantimon/favicons-webpack-plugin",
           },
           { name: "Post CSS", link: "https://postcss.org" },
+          { name: "Emoji Mart", link: "https://github.com/missive/emoji-mart" },
           { name: "uniqid", link: "https://github.com/adamhalasz/uniqid" },
         ];
 
-        libArray.forEach((e) => {
+        // libArray.forEach((e) => {
+        for (let i = 0; i < libArray.length; i++) {
           const lib = document.createElement("a");
-          lib.textContent = e.name;
-          lib.href = e.link;
-          lib.className =
-            "hover:underline text-gray-700 text-lg hover:text-black transition";
+          lib.textContent = i+1 + ". "+libArray[i].name;
+          lib.href = libArray[i].link;
+          lib.className = "ml-4 hover:text-blue-700 transition w-fit";
 
           libraries.appendChild(lib);
-        });
+        }
 
         const iconsP = document.createElement("p");
         iconsP.textContent = "Icons by ";
-        iconsP.className = "text-3xl font-bold px-8";
+        iconsP.className = "text-xl text-center font-semibold px-8";
 
-        iconsP.innerHTML += `<a href="https://github.com/krystonschwarze/coolicons" class="hover:underline">coolicons</a>`;
+        iconsP.innerHTML += `<a href="https://github.com/krystonschwarze/coolicons" class="hover:text-blue-700 transition-colors">coolicons</a>`;
 
         const deployed = document.createElement("div");
-        deployed.className =
-          "flex gap-4 items-center justify-center text-lg px-8";
+        deployed.className = "flex gap-2 items-center justify-center px-8";
 
         const deployedP = document.createElement("p");
         deployedP.textContent = "Deployed using";
 
         const deployedIcon = document.createElement("a");
         deployedIcon.href = "https://vercel.com";
-        deployedIcon.className = "h-6";
-        deployedIcon.innerHTML += `<svg class="h-full w-auto" xmlns="http://www.w3.org/2000/svg" width="4438" height="1000" viewBox="0 0 4438 1000" fill="none"><path d="M2223.75 250C2051.25 250 1926.87 362.5 1926.87 531.25C1926.87 700 2066.72 812.5 2239.38 812.5C2343.59 812.5 2435.47 771.25 2492.34 701.719L2372.81 632.656C2341.25 667.188 2293.28 687.344 2239.38 687.344C2164.53 687.344 2100.94 648.281 2077.34 585.781H2515.16C2518.59 568.281 2520.63 550.156 2520.63 531.094C2520.63 362.5 2396.41 250 2223.75 250ZM2076.09 476.562C2095.62 414.219 2149.06 375 2223.75 375C2298.59 375 2352.03 414.219 2371.41 476.562H2076.09ZM2040.78 78.125L1607.81 828.125L1174.69 78.125H1337.03L1607.66 546.875L1878.28 78.125H2040.78ZM577.344 0L1154.69 1000H0L577.344 0ZM3148.75 531.25C3148.75 625 3210 687.5 3305 687.5C3369.38 687.5 3417.66 658.281 3442.5 610.625L3562.5 679.844C3512.81 762.656 3419.69 812.5 3305 812.5C3132.34 812.5 3008.13 700 3008.13 531.25C3008.13 362.5 3132.5 250 3305 250C3419.69 250 3512.66 299.844 3562.5 382.656L3442.5 451.875C3417.66 404.219 3369.38 375 3305 375C3210.16 375 3148.75 437.5 3148.75 531.25ZM4437.5 78.125V796.875H4296.88V78.125H4437.5ZM3906.25 250C3733.75 250 3609.38 362.5 3609.38 531.25C3609.38 700 3749.38 812.5 3921.88 812.5C4026.09 812.5 4117.97 771.25 4174.84 701.719L4055.31 632.656C4023.75 667.188 3975.78 687.344 3921.88 687.344C3847.03 687.344 3783.44 648.281 3759.84 585.781H4197.66C4201.09 568.281 4203.12 550.156 4203.12 531.094C4203.12 362.5 4078.91 250 3906.25 250ZM3758.59 476.562C3778.13 414.219 3831.41 375 3906.25 375C3981.09 375 4034.53 414.219 4053.91 476.562H3758.59ZM2961.25 265.625V417.031C2945.63 412.5 2929.06 409.375 2911.25 409.375C2820.47 409.375 2755 471.875 2755 565.625V796.875H2614.38V265.625H2755V409.375C2755 330 2847.34 265.625 2961.25 265.625Z" fill="black"/></svg>`;
+        deployedIcon.className = "h-4";
+        deployedIcon.innerHTML += `<svg class="h-full w-auto text-black hover:text-blue-700 transition-colors" xmlns="http://www.w3.org/2000/svg" width="4438" height="1000" viewBox="0 0 4438 1000"><path d="M2223.75 250C2051.25 250 1926.87 362.5 1926.87 531.25C1926.87 700 2066.72 812.5 2239.38 812.5C2343.59 812.5 2435.47 771.25 2492.34 701.719L2372.81 632.656C2341.25 667.188 2293.28 687.344 2239.38 687.344C2164.53 687.344 2100.94 648.281 2077.34 585.781H2515.16C2518.59 568.281 2520.63 550.156 2520.63 531.094C2520.63 362.5 2396.41 250 2223.75 250ZM2076.09 476.562C2095.62 414.219 2149.06 375 2223.75 375C2298.59 375 2352.03 414.219 2371.41 476.562H2076.09ZM2040.78 78.125L1607.81 828.125L1174.69 78.125H1337.03L1607.66 546.875L1878.28 78.125H2040.78ZM577.344 0L1154.69 1000H0L577.344 0ZM3148.75 531.25C3148.75 625 3210 687.5 3305 687.5C3369.38 687.5 3417.66 658.281 3442.5 610.625L3562.5 679.844C3512.81 762.656 3419.69 812.5 3305 812.5C3132.34 812.5 3008.13 700 3008.13 531.25C3008.13 362.5 3132.5 250 3305 250C3419.69 250 3512.66 299.844 3562.5 382.656L3442.5 451.875C3417.66 404.219 3369.38 375 3305 375C3210.16 375 3148.75 437.5 3148.75 531.25ZM4437.5 78.125V796.875H4296.88V78.125H4437.5ZM3906.25 250C3733.75 250 3609.38 362.5 3609.38 531.25C3609.38 700 3749.38 812.5 3921.88 812.5C4026.09 812.5 4117.97 771.25 4174.84 701.719L4055.31 632.656C4023.75 667.188 3975.78 687.344 3921.88 687.344C3847.03 687.344 3783.44 648.281 3759.84 585.781H4197.66C4201.09 568.281 4203.12 550.156 4203.12 531.094C4203.12 362.5 4078.91 250 3906.25 250ZM3758.59 476.562C3778.13 414.219 3831.41 375 3906.25 375C3981.09 375 4034.53 414.219 4053.91 476.562H3758.59ZM2961.25 265.625V417.031C2945.63 412.5 2929.06 409.375 2911.25 409.375C2820.47 409.375 2755 471.875 2755 565.625V796.875H2614.38V265.625H2755V409.375C2755 330 2847.34 265.625 2961.25 265.625Z" fill="currentColor" /></svg>`;
 
         deployed.append(deployedP, deployedIcon);
 
-        const sourceCode = document.createElement("a");
-        // sourceCode.textContent = "Source Code";
-        // const gitLogo = document.createElement("div");
-        // gitLogo.innerHTML += `<svg class="h-fit w-fit" xmlns="http://www.w3.org/2000/svg" width="98" height="96"><path fill-rule="evenodd" clip-rule="evenodd" d="M48.854 0C21.839 0 0 22 0 49.217c0 21.756 13.993 40.172 33.405 46.69 2.427.49 3.316-1.059 3.316-2.362 0-1.141-.08-5.052-.08-9.127-13.59 2.934-16.42-5.867-16.42-5.867-2.184-5.704-5.42-7.17-5.42-7.17-4.448-3.015.324-3.015.324-3.015 4.934.326 7.523 5.052 7.523 5.052 4.367 7.496 11.404 5.378 14.235 4.074.404-3.178 1.699-5.378 3.074-6.6-10.839-1.141-22.243-5.378-22.243-24.283 0-5.378 1.94-9.778 5.014-13.2-.485-1.222-2.184-6.275.486-13.038 0 0 4.125-1.304 13.426 5.052a46.97 46.97 0 0 1 12.214-1.63c4.125 0 8.33.571 12.213 1.63 9.302-6.356 13.427-5.052 13.427-5.052 2.67 6.763.97 11.816.485 13.038 3.155 3.422 5.015 7.822 5.015 13.2 0 18.905-11.404 23.06-22.324 24.283 1.78 1.548 3.316 4.481 3.316 9.126 0 6.6-.08 11.897-.08 13.526 0 1.304.89 2.853 3.316 2.364 19.412-6.52 33.405-24.935 33.405-46.691C97.707 22 75.788 0 48.854 0z" fill="#24292f"/></svg>`;
+        const sourceCode = document.createElement("div");
+        sourceCode.textContent = "Source Code at";
+        sourceCode.className = " flex gap-2 justify-center";
 
-        // gitLogo.className = "h-6 w-6"
-        // sourceCode.appendChild(gitLogo);
-        sourceCode.textContent = "Github";
-        sourceCode.href = "https://github.com/dilpreetsinghaulakh/todo-list";
-        sourceCode.className =
-          "text-center font-semibold text-lg hover:underline";
+        const gitLogo = document.createElement("a");
+        gitLogo.className = "font-bold hover:text-blue-700 transition-colors";
+        gitLogo.textContent = "Github";
+        gitLogo.href = "https://github.com/dilpreetsinghaulakh/todo-list";
+        gitLogo.target = "blank";
+        sourceCode.appendChild(gitLogo);
 
         const devIn = document.createElement("p");
-        devIn.textContent = "Developed in Amritsar";
+        devIn.textContent = "Developed in";
         devIn.className = "text-center";
+
+        const city = document.createElement("span");
+        city.textContent = " Amritsar";
+        city.className =
+          "font-bold bg-gradient-to-r from-orange-500 via-pink-500 to-violet-500 bg-clip-text text-transparent";
+        devIn.appendChild(city);
 
         const copyright = document.createElement("p");
         copyright.textContent = `©${new Date().getFullYear()} Dilpreet Singh`;
-        copyright.className = "text-center";
+        copyright.className = "text-center text-sm";
 
         const version = document.createElement("p");
         version.textContent = "Version 0.9.1 (RC)";
-        version.className = "text-center text-sm";
+        version.className = "text-center text-xs text-black/60";
 
         container.append(
           row1,
