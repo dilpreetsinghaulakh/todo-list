@@ -197,7 +197,7 @@ export default class ui {
         copyright.className = "text-center text-sm";
 
         const version = document.createElement("p");
-        version.textContent = "Version 1.0.0";
+        version.textContent = "Version 1.0.1";
         version.className = "text-center text-xs text-black/60";
 
         container.append(
