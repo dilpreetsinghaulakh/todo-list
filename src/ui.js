@@ -70,11 +70,11 @@ export default class ui {
       settingsIcon.addEventListener("click", () => {
         const overlay = document.createElement("div");
         overlay.className =
-          "h-screen w-screen absolute top-0 left-0 bg-white/70 backdrop-blur-none opacity-0 transition duration-500 flex items-center justify-center p-24";
+          "h-screen w-screen absolute top-0 left-0 bg-white/0 backdrop-blur-none transition duration-500 flex justify-center p-24 pb-4 overflow-y-hidden"; // opacity-0 bg-white/70
 
         const container = document.createElement("div");
         container.className =
-          "w-full max-w-5xl h-full border rounded-xl p-4 bg-white flex flex-col gap-4 overflow-y-scroll ";
+          "w-full max-w-4xl h-fit border rounded-xl p-4 bg-white flex flex-col gap-4 translate-y-[100%] transition-all duration-700"; //overflow-y-scroll  h-full
 
         const row1 = document.createElement("div");
         row1.className = "flex items-center ml-8 gap-8";
@@ -97,25 +97,25 @@ export default class ui {
         appName.append(name, tag);
 
         const closeBtnContainer = document.createElement("div");
-        closeBtnContainer.style.width = "calc(100% - 14rem)";
-        closeBtnContainer.style.maxWidth = "62rem";
         closeBtnContainer.className =
-          "fixed self-start left-1/2 -translate-x-1/2 flex justify-end";
+          "fixed self-start left-1/2 -translate-x-1/2 flex justify-end py-4 -translate-y-4 opacity-0 transition-opacity";
 
         const closeBtn = document.createElement("button");
-        closeBtn.innerHTML += `<svg class="h-full w-full" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M16 16L12 12M12 12L8 8M12 12L16 8M12 12L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        closeBtn.innerHTML += `<svg class="h-8 w-8" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path id="Vector" d="M16 16L12 12M12 12L8 8M12 12L16 8M12 12L8 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
         closeBtn.className =
-          "border border-gray-300 bg-gray-100 hover:bg-gray-200 transition  ml-auto h-10 w-10 rounded-md";
+          "bg-gray-300/30 hover:bg-gray-200 transition ml-auto p-1 rounded-full backdrop-blur";
 
         closeBtn.addEventListener("click", () => {
           overlay.classList.add("opacity-0");
+          closeBtnContainer.classList.add("opacity-0");
           setTimeout(() => {
             overlay.remove();
+            closeBtnContainer.remove();
           }, 500);
         });
         closeBtnContainer.appendChild(closeBtn);
 
-        row1.append(appIcon, appName, closeBtnContainer);
+        row1.append(appIcon, appName);
 
         const libraries = document.createElement("div");
         libraries.className = "flex flex-col gap-2 px-8";
@@ -213,13 +213,49 @@ export default class ui {
 
         overlay.appendChild(container);
 
+        document.body.append(overlay, closeBtnContainer);
+
         setTimeout(() => {
-          overlay.classList.remove("opacity-0");
+          overlay.classList.remove("bg-white/0");
           overlay.classList.remove("backdrop-blur-none");
           overlay.classList.add("backdrop-blur");
+          overlay.classList.add("bg-white/70");
+
+          container.classList.remove("translate-y-[100%]");
+          container.classList.add("transform-none");
+          container.classList.remove("opacity-0");
         }, 1);
 
-        document.body.appendChild(overlay);
+        setTimeout(() => {
+          overlay.classList.remove("overflow-y-hidden");
+          overlay.classList.add("overflow-y-scroll");
+
+          closeBtnContainer.style.top = `calc(${
+            container.getBoundingClientRect().top
+          }px + 1rem`;
+          closeBtnContainer.classList.remove("opacity-0");
+        }, 750);
+
+
+        // Close Button Container Properties
+        const setCloseBtnContainerWidth = () => {
+          closeBtnContainer.style.width = `calc(${container.offsetWidth}px - 2rem`;
+        };
+
+        overlay.addEventListener("scroll", () => {
+          closeBtnContainer.style.top = `calc(${
+            container.getBoundingClientRect().top
+          }px + 1rem`;
+          if (container.getBoundingClientRect().top <= 0) {
+            closeBtnContainer.style.top = "1rem";
+          }
+        });
+
+        setCloseBtnContainerWidth()
+
+        window.addEventListener("resize", ()=>{
+          setCloseBtnContainerWidth()
+        })
       });
 
       topBar.append(appIcon, settingsIcon);
