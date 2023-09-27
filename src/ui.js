@@ -107,6 +107,7 @@ export default class ui {
 
         closeBtn.addEventListener("click", () => {
           overlay.classList.add("opacity-0");
+          overlay.classList.remove("backdrop-blur");
           closeBtnContainer.classList.add("opacity-0");
           setTimeout(() => {
             overlay.remove();
@@ -236,7 +237,6 @@ export default class ui {
           closeBtnContainer.classList.remove("opacity-0");
         }, 750);
 
-
         // Close Button Container Properties
         const setCloseBtnContainerWidth = () => {
           closeBtnContainer.style.width = `calc(${container.offsetWidth}px - 2rem`;
@@ -251,11 +251,11 @@ export default class ui {
           }
         });
 
-        setCloseBtnContainerWidth()
+        setCloseBtnContainerWidth();
 
-        window.addEventListener("resize", ()=>{
-          setCloseBtnContainerWidth()
-        })
+        window.addEventListener("resize", () => {
+          setCloseBtnContainerWidth();
+        });
       });
 
       topBar.append(appIcon, settingsIcon);
@@ -740,7 +740,6 @@ export default class ui {
       projectName.append(emoji, name);
 
       const projectTodoData = getTodoData()[project];
-      // console.log(projectTodoData);
 
       const todo = document.createElement("div");
       todo.id = "todoDiv";
@@ -753,7 +752,7 @@ export default class ui {
     const noTodoContainerClasses =
       "flex items-center flex-grow justify-center rounded-md bg-gray-50 border";
     const withTodoContainerClasses =
-      "flex-grow flex flex-col gap-4 overflow-y-scroll rounded-md bg-gray-50 p-2 border";
+      "flex-grow flex flex-col overflow-y-scroll rounded-md bg-gray-50 p-2 border";
 
     const printTodo = (todoDiv, todoArray, project) => {
       if (!todoArray.length) {
@@ -778,7 +777,8 @@ export default class ui {
     };
     const getTodoDiv = (todoObj, project) => {
       const todoContainer = document.createElement("div");
-      todoContainer.className = "border rounded-md p-4 bg-white";
+      todoContainer.className =
+        "border rounded-md p-4 bg-white transition-all my-2";
 
       const row1 = document.createElement("div");
       row1.className = "flex justify-between gap-2 items-center";
@@ -1115,7 +1115,17 @@ export default class ui {
 
       deleteBtn.addEventListener("click", () => {
         deleteTodo(project, todoObj.id);
-        todoContainer.remove();
+        row3.classList.add("h-0");
+        todoContainer.classList.add("h-0");
+        todoContainer.classList.add("py-0");
+        todoContainer.classList.add("my-0");
+        todoContainer.classList.remove("my-2");
+        todoContainer.classList.add("opacity-0");
+        setTimeout(() => {
+          todoContainer.classList.remove("border");
+
+          todoContainer.remove();
+        }, 150);
 
         const todoDiv = document.getElementById("todoDiv");
         if (!todoDiv.hasChildNodes()) {
